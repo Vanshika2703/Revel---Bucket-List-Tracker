@@ -1,10 +1,15 @@
 body {
-    background: #DDDDDD;
+    background: url(../images/boardBackground1.jpg) no-repeat center center fixed;
+  background-size: cover;
+  height: 100%;
+  overflow: hidden;
+
 }
 
 .navbar {
-    background-color: #800000;
+    background-color: #96C7CA;
     color: white;
+justify-content: center;
 }
 
 .page-container {
