@@ -15,3 +15,16 @@ justify-content: center;
 .page-container {
     margin-top: 75px;
 }
+
+#fab {
+    background: gray;
+    color: white;
+    position: fixed;
+    right: 10px;
+    z-index: 999;
+}
+
+#fab:active {
+    opacity: 0.8;
+    transform: translateY(2px);
+}
