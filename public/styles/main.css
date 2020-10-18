@@ -63,3 +63,24 @@ body {
     display: inline-block;
     bottom: 60px;
 }
+#fab {
+    background: gray;
+    color: white;
+    position: fixed;
+    right: 10px;
+    z-index: 999;
+}
+
+#fab:active {
+    opacity: 0.8;
+    transform: translateY(2px);
+}
+
+#newListModal {
+    height: 100vh;
+}
+
+#Modal{
+    height: 100vh;
+    background: #96C7CA;
+}
