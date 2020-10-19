@@ -1,9 +1,9 @@
+html{
+    height:100%;
+}
 body {
-    background: url(../images/boardBackground1.jpg) no-repeat center center fixed;
-  background-size: cover;
+  background: #DDDDDD;
   height: 100%;
-  overflow: hidden;
-
 }
 
 .navbar {
@@ -102,4 +102,16 @@ body {
     background-color: #96C7CA;
     margin:20px;
     display: inline-block;
+}
+
+#listPage{
+    margin:10px 0px;
+    padding-top: 80px;
+  }
+
+  #backgroundHolder{
+    background: url(../images/boardBackground1.jpg) no-repeat center center fixed;
+  background-size: cover;
+  height: 100%;
+  overflow: hidden;
 }
