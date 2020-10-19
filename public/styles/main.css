@@ -67,6 +67,7 @@ body {
     background: gray;
     color: white;
     position: fixed;
+    top: 2px;
     right: 10px;
     z-index: 999;
 }
@@ -83,4 +84,22 @@ body {
 #Modal{
     height: 100vh;
     background: #96C7CA;
+}
+
+#newListModal .material-icons{
+    font-size: 48px;
+}
+
+.input, .input:active, .input:focus{
+    background: transparent;
+    border:transparent;
+    font-size: larger;
+}
+
+.card{
+    height: 25rem;
+    width: 18rem;
+    background-color: #96C7CA;
+    margin:20px;
+    display: inline-block;
 }

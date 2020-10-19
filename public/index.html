@@ -12,24 +12,48 @@
 
 <body>
   <div id="navPlaceholder"></div>
-  <div id="mainPage" class="container page-container"></div>
+  <div id="listPage" class="container page-container">
+    <div id="listContainer" style="width:100%">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">title</h5>
+          <h6 class="card-subtitle mb-2 text-muted">item</h6>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">title</h5>
+          <h6 class="card-subtitle mb-2 text-muted">item</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#newListModal">
+    <i class="material-icons">add</i>
+  </button>
   
   <!--Modal-->
   <div class="modal fade" id="newListModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div  class="modal-dialog modal-dialog-centered" role="document">
       <div id="Modal" class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+          <button id="back" type="button" class="btn btn-dark" data-dismiss="modal"><i class="material-icons fa-3x">arrow_back</i></button>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio tenetur quam quis provident consectetur repellendus velit blanditiis doloribus illo atque fuga quibusdam, asperiores officiis exercitationem aliquam earum possimus a consequuntur.
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <div class="form-group row">
+            <div class="col-sm-10">
+              <input class="input" id="inputTitle" placeholder="Title">
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-10">
+              <button class="inline btn btn-dark" type="button"><i class="material-icons">crop_square</i></button>
+              <input class="input inline" id="inputItem" placeholder="item1">
+            </div>
+          </div>
         </div>
       </div>
     </div>
