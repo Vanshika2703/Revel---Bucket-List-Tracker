@@ -27,3 +27,16 @@
         </ul>
     </div>
 </nav>
+<script>
+    $("#signOutSideNavButton").click((event) => {
+		console.log("sign out");
+
+		firebase.auth().signOut().then(function() {
+			// Sign-out successful.
+			console.log("You are now signed out");
+		}).catch(function(error) {
+			// An error happened.
+			console.log("Signed out error");
+		});
+	});
+</script>

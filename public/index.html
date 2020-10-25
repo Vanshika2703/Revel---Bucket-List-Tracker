@@ -6,61 +6,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
+  <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.7.0/firebase-ui-auth.css" />
   <link rel="stylesheet" href="styles/main.css">
-  <title>Revel</title>
+  <title>Firebase Auth</title>
 </head>
 
 <body>
-  <div id="backgroundHolder">
   <div id="navPlaceholder"></div>
-  <div id="listPage" class="container page-container">
-    <div id="listContainer" style="width:100%">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">title</h5>
-          <h6 class="card-subtitle mb-2 text-muted">item</h6>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">title</h5>
-          <h6 class="card-subtitle mb-2 text-muted">item</h6>
-        </div>
-      </div>
+  <div id="loginPage" class="container page-container">
+
+    <div class="form-group">
+      <label for="exampleInputEmail1" class="bmd-label-floating">Email</label>
+      <input type="email" class="form-control" id="inputEmail">
     </div>
-  </div>
-  <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#newListModal">
-    <i class="material-icons">add</i>
-  </button>
-  
-  <!--Modal-->
-  <div class="modal fade" id="newListModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div  class="modal-dialog modal-dialog-centered" role="document">
-      <div id="Modal" class="modal-content">
-        <div class="modal-header">
-          <button id="back" type="button" class="btn btn-dark" data-dismiss="modal"><i class="material-icons fa-3x">arrow_back</i></button>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group row">
-            <div class="col-sm-10">
-              <input class="input" id="inputTitle" placeholder="Title">
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-sm-10">
-              <button class="inline btn btn-dark" type="button"><i class="material-icons">crop_square</i></button>
-              <input class="input inline" id="inputItem" placeholder="item1">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1" class="bmd-label-floating">Password</label>
+      <input type="password" class="form-control" id="inputPassword">
+    </div>  
+
+    <button id="createAccountButton" type="button" class="btn btn-primary btn-outline">CREATE ACCOUNT</button>
+    <button id="logInButton" type="button" class="btn btn-primary btn-outline">LOG IN TO AN EXISTING ACCOUNT</button>
+    <hr>
+    <div id="firebaseui-auth-container"></div>
 
 
+  </div>
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>
   <script src="scripts/bootstrap-material-design.js"></script>
@@ -68,15 +38,14 @@
   <script src="/__/firebase/7.18.0/firebase-app.js"></script>
   <script src="/__/firebase/7.18.0/firebase-analytics.js"></script>
   <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
-  <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
   <script src="/__/firebase/init.js"></script>
-  <script src="scripts/main.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/ui/4.7.0/firebase-ui-auth.js"></script>
   <script>
     $(() => {
       $("#navPlaceholder").load("navBar.html");
     });
   </script>
-  </div>
+  <script src="scripts/main.js"></script>
 </body>
 
 </html>
