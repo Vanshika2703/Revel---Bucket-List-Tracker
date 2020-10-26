@@ -1,5 +1,5 @@
 
-var rhit = rhit || {};
+var revel = revel || {};
 
 //From: https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro/35385518#35385518
 function htmlToElement(html) {
@@ -8,7 +8,7 @@ function htmlToElement(html) {
     return template.content.firstChild;
 }
 
-rhit.ListPageController = class {
+revel.ListPageController = class {
 	constructor() {
 		// document.querySelector("#submitAddQuote").onclick = (event) =>{}
 		document.querySelector("#back").addEventListener("click",(event)=>{
@@ -47,7 +47,7 @@ rhit.ListPageController = class {
 	}
    }
 
-rhit.List = class {
+revel.List = class {
 	constructor(id, title,items) {
 	  this.id = id;
 	  this.title = title;
@@ -55,23 +55,7 @@ rhit.List = class {
 	}
 }
 
-/* Main */
-/** function and class syntax examples */
-rhit.main = function () {
-	console.log("Ready");
-	
-	rhit.fbAuthManager = new rhit.FbAuthManager();
-	rhit.fbAuthManager.beginListening(()=>{
-		console.log("auth change callback fired.");
-		console.log("sign in: ", rhit.fbAuthManager.isSignedIn);
-
-		rhit.checkForRedirects();
-
-		rhit.initializePage();
-	});
-};
-
-rhit.initializePage = function() {
+revel.initializePage = function() {
 	const queryString = location.search;
 	const urlParams = new URLSearchParams(queryString);
 
@@ -80,79 +64,9 @@ rhit.initializePage = function() {
 		const uid = urlParams.get("uid");
 		console.log("main page for ", uid);
 	}
-
-	if(document.querySelector("#loginPage"))  {
-		console.log("login page");
-		new rhit.LoginPageController();
-	}
 };
 
-rhit.checkForRedirects = function() {
-	if(document.querySelector("#loginPage") && rhit.fbAuthManager.isSignedIn) {
-		location.href = "/main.html";
-	}
-	if(!document.querySelector("#loginPage") && !rhit.fbAuthManager.isSignedIn) {
-		location.href = "/";
-	}
-};
-
-rhit.LoginPageController = class {
-	constructor() {
-		firebase.auth().onAuthStateChanged((user) => {
-			if (user) {
-			  // User is signed in.
-			  var displayName = user.displayName;
-			  var email = user.email;
-			  var photoURL = user.photoURL;
-			  var phoneNumber = user.phoneNumber;
-			  var isAnonymous = user.isAnonymous;
-			  var uid = user.uid;
-			  // ...
-			  console.log("The user is signed in ", uid);
-			  console.log("displayName :>> ", displayName);
-			  console.log("email :>> ", email);
-			  console.log("photoURL :>> ", photoURL);
-			  console.log("phoneNumber :>> ", phoneNumber);
-			  console.log("isAnonymous :>> ", isAnonymous);
-			  console.log("uid :>> ", uid);
-			} else {
-			  // User is signed out.
-			  // ...
-			  console.log("There is no user signed in");
-			}
-		});
-	
-		const inputEmailEl = document.querySelector("#inputEmail");
-		const inputPasswordEl = document.querySelector("#inputPassword");
-	
-		document.querySelector("#createAccountButton").onclick = (event) => {
-			console.log(`Create account for email: ${inputEmailEl.value} password: ${inputPasswordEl.value}`);
-	
-			firebase.auth().createUserWithEmailAndPassword(inputEmailEl.value, inputPasswordEl.value).catch(function(error) {
-				// Handle Errors here.
-				var errorCode = error.code;
-				var errorMessage = error.message;
-				console.log("Create account error ", errorCode, errorMessage);
-				// ...
-			});
-		};
-		document.querySelector("#logInButton").onclick = (event) => {
-			console.log(`Log in for email: ${inputEmailEl.value} password: ${inputPasswordEl.value}`);
-	
-			firebase.auth().signInWithEmailAndPassword(inputEmailEl.value, inputPasswordEl.value).catch(function(error) {
-				// Handle Errors here.
-				var errorCode = error.code;
-				var errorMessage = error.message;
-				// ...
-				console.log("Existing account log in error ", errorCode, errorMessage);
-			});
-		};
-	
-		rhit.startFirebaseUI();
-	}
-}
-
-rhit.FbAuthManager = class {
+revel.FbAuthManager = class {
 	constructor() {
 		this._user=null;
 	}
@@ -168,22 +82,29 @@ rhit.FbAuthManager = class {
 	get uid() {
 		return this._user.uid;
 	}
-}
+};
 
-rhit.startFirebaseUI = function() {
-	// FirebaseUI config.
-	var uiConfig = {
-        signInSuccessUrl: '/',
-        signInOptions: [
-          // Leave the lines as is for the providers you want to offer your users.
-          firebase.auth.GoogleAuthProvider.PROVIDER_ID
-        ]
-      };
+revel.checkForRedirects = function() {
+	if(revel.fbAuthManager.isSignedIn && revel.onIndex) {
+		location.href = "/main.html";
+	}
+	if(!revel.fbAuthManager.isSignedIn && !revel.onIndex) {
+		location.href = "/";
+	}
+};
 
-      // Initialize the FirebaseUI Widget using Firebase.
-      var ui = new firebaseui.auth.AuthUI(firebase.auth());
-      // The start method will wait until the DOM is loaded.
-      ui.start('#firebaseui-auth-container', uiConfig);
-}
+revel.main = function () {
+	console.log("Ready");
+	
+	revel.fbAuthManager = new revel.FbAuthManager();
+	revel.fbAuthManager.beginListening(()=>{
+		console.log("auth change callback fired.");
+		console.log("sign in: ", revel.fbAuthManager.isSignedIn);
 
-rhit.main();
+		revel.checkForRedirects();
+
+		revel.initializePage();
+	});
+};
+
+revel.main();

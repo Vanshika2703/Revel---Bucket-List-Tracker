@@ -7,29 +7,31 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
   <link rel="stylesheet" href="styles/bootstrap-material-design.min.css">
   <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.7.0/firebase-ui-auth.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles/main.css">
-  <title>Firebase Auth</title>
+  <title>Revel</title>
 </head>
 
 <body>
-  <div id="navPlaceholder"></div>
-  <div id="loginPage" class="container page-container">
-
-    <div class="form-group">
-      <label for="exampleInputEmail1" class="bmd-label-floating">Email</label>
-      <input type="email" class="form-control" id="inputEmail">
+  <div id="loginPage">
+    <div  class="container">
+      <div id="loginTitle">
+        Revel
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1" class="bmd-label-floating">Email</label>
+        <input type="email" class="form-control" id="inputEmail">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1" class="bmd-label-floating">Password</label>
+        <input type="password" class="form-control" id="inputPassword">
+      </div>  
+  
+      <button id="createAccountButton" type="button" class="btn btn-primary btn-outline">CREATE ACCOUNT</button>
+      <button id="logInButton" type="button" class="btn btn-primary btn-outline">LOG IN TO AN EXISTING ACCOUNT</button>
+      <hr>
+      <div id="firebaseui-auth-container"></div>
     </div>
-    <div class="form-group">
-      <label for="exampleInputPassword1" class="bmd-label-floating">Password</label>
-      <input type="password" class="form-control" id="inputPassword">
-    </div>  
-
-    <button id="createAccountButton" type="button" class="btn btn-primary btn-outline">CREATE ACCOUNT</button>
-    <button id="logInButton" type="button" class="btn btn-primary btn-outline">LOG IN TO AN EXISTING ACCOUNT</button>
-    <hr>
-    <div id="firebaseui-auth-container"></div>
-
-
   </div>
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/popper.js"></script>
@@ -40,12 +42,9 @@
   <script src="/__/firebase/7.18.0/firebase-auth.js"></script>
   <script src="/__/firebase/init.js"></script>
   <script src="https://www.gstatic.com/firebasejs/ui/4.7.0/firebase-ui-auth.js"></script>
-  <script>
-    $(() => {
-      $("#navPlaceholder").load("navBar.html");
-    });
-  </script>
   <script src="scripts/main.js"></script>
+  <script> revel.onIndex = true </script>
+  <script src="scripts/login.js"></script>
 </body>
 
 </html>
