@@ -31,6 +31,7 @@ body {
     height: 30%;
     max-height: 250px;
     background-color: #86B7BA;
+    padding: 20px;
 }
 
 .navbar-collapse {
@@ -128,6 +129,13 @@ body {
     text-align: center;
     font-size: 10em;
     font-family: 'Permanent Marker', cursive;
+}
+
+.profile-picture {
+    border-radius: 50%;
+    align-self: center;
+    height: 60%;
+
 }
 
 @media (max-width: 575px) {

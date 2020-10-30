@@ -38,5 +38,9 @@
 			// An error happened.
 			console.log("Signed out error");
 		});
-	});
+    });
+    
+    firebase.auth().onAuthStateChanged((user) => {
+        document.querySelector(".upper-side-nav").innerHTML = `<img src=${user.photoURL} alt="profile picture" class="profile-picture"> <br><br> ${user.displayName}`
+    });
 </script>
