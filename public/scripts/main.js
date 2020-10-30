@@ -1,6 +1,17 @@
 
 var revel = revel || {};
 
+revel.FB_COLLECTION_LISTS = "lists";
+revel.FB_KEY_TITLE = "Title";
+revel.FB_KEY_COLOR = "color";
+revel.FB_KEY_LAST_TOUCHED = "lastTouched";
+revel.FB_COLLECTION_ITEMS = "Items";
+revel.FB_KEY_DESCRIPTION = "Description";
+revel.FB_KEY_PICTURE = "Picture";
+revel.FB_KEY_ISCHECKED = "isChecked";
+revel.FB_KEY_JOURNAL = "journalEntry";
+
+
 //From: https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro/35385518#35385518
 function htmlToElement(html) {
     var template = document.createElement('template');
@@ -12,9 +23,9 @@ revel.ListPageController = class {
 	constructor() {
 		// document.querySelector("#submitAddQuote").onclick = (event) =>{}
 		document.querySelector("#back").addEventListener("click",(event)=>{
-			const list = newList(1,document.querySelector("#inputTitle").value,document.querySelector("#inputItem").value);
+		//	const list = new List(1,document.querySelector("#inputTitle").value,document.querySelector("#inputItem").value);
 			const title = document.querySelector("#inputTitle").value;
-			const item = document.querySelector("#inputItem").value;
+			const items = document.querySelector("#inputItem").value;
 			
 		});
 
@@ -24,9 +35,9 @@ revel.ListPageController = class {
 		});
 	}
 	updateList() {
-		//make a new quote list container
+		//make a new bucket list container
 		const newList = htmlToElement('<div id="listContainer"></div>');
-		//fill them with quote cards
+		//fill them with list cards
 			const newCard = this._createCard(list.title, list.item);
 			newList.appendChild(newCard);
 		//remove the old one
@@ -37,18 +48,35 @@ revel.ListPageController = class {
 		oldList.parentElement.appendChild(newList);
 	}
 
-	_createCard(title, item){
+	_createCard(title, items){
 		return htmlToElement(`<div class="card">
         <div class="card-body">
           <h5 class="card-title">${title}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">${item}</h6>
+          <h6 class="card-subtitle mb-2 text-muted">${items}</h6>
         </div>
       </div>`);
+	}
+	_createItems(items){
+		let itemHtml = "";
+		items.forEach(item => {
+			itemHtml += `<label> <input type="checkbox"> <h5>${item}</h5> </label>`
+		});
+		return itemHtml;
 	}
    }
 
 revel.List = class {
-	constructor(id, title,items) {
+	constructor(id, desc, pic, isChecked, journalEntry) {
+	  this.id = id;
+	  this.desc = desc;
+	  this.pic = pic;
+	  this.isChecked = isChecked;
+	  this.journalEntry = journalEntry;
+	}
+}
+
+revel.Item = class {
+	constructor(id, title, items) {
 	  this.id = id;
 	  this.title = title;
 	  this.items = items;  

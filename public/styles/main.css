@@ -111,7 +111,7 @@ body {
   }
 
 #backgroundHolder{
-    background: url(../images/boardBackground1.jpg) no-repeat center center fixed;
+    background: url(../images/boardBackground.jpg) no-repeat center center fixed;
   background-size: cover;
   height: 100%;
   overflow: hidden;
@@ -133,5 +133,12 @@ body {
 @media (max-width: 575px) {
     #loginTitle {
         font-size: 5em;
+    }
+}
+@media (max-width: 375px) {
+    .card{
+        height: 12.5rem;
+        width: 9rem;
+        margin:10px;
     }
 }
