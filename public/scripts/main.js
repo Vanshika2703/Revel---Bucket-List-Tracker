@@ -10,6 +10,7 @@ revel.FB_KEY_DESCRIPTION = "Description";
 revel.FB_KEY_PICTURE = "Picture";
 revel.FB_KEY_ISCHECKED = "isChecked";
 revel.FB_KEY_JOURNAL = "journalEntry";
+revel.fbBucketListManager = null;
 
 
 //From: https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro/35385518#35385518
@@ -124,8 +125,61 @@ revel.checkForRedirects = function() {
 	}
 };
 
+revel.FbBucketListManager = class {
+	constructor() {
+	  this._documentSnapshots = [];
+	  this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_LISTS);
+	  this._unsubscribe = null;
+	}
+	add(quote, movie) {  
+		console.log(`${quote}, ${movie}`);	
+		// Add a new document with a generated id.
+		this._ref.add({
+			[rhit.FB_KEY_QUOTE] : quote,
+			[rhit.FB_KEY_MOVIE] : movie,
+			[rhit.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+		})
+		.then(function(docRef) {
+			console.log("Document written with ID: ", docRef.id);
+		})
+		.catch(function(error) {
+			console.error("Error adding document: ", error);
+		});
+	}
+	beginListening(changeListener) {    
+		this._unsubscribe = this._ref
+		.orderBy(rhit.FB_KEY_LAST_TOUCHED, "desc")
+		.limit(50)
+		.onSnapshot((querySnapshot) => {
+				console.log("MovieQuote update!");
+				this._documentSnapshots = querySnapshot.docs;
+				changeListener();
+			});
+		
+	}
+	stopListening() {    
+		this._unsubscribe();
+	}
+	get length() {    
+		return this._documentSnapshots.length;
+	}
+	getMovieQuoteAtIndex(index) {
+		const docSnapshot = this._documentSnapshots[index];
+		const mq = new rhit.MovieQuote(docSnapshot.id,
+			docSnapshot.get(rhit.FB_KEY_QUOTE),
+			docSnapshot.get(rhit.FB_KEY_MOVIE));
+		return mq;
+	}
+   }
+
 revel.main = function () {
 	console.log("Ready");
+
+	if(document.querySelector("#listPage")){
+		console.log("You are on list page");
+		revel.fbBucketListManager = new revel.FbBucketListManager();
+		// new rhit.ListPageController();
+	}
 	
 	revel.fbAuthManager = new revel.FbAuthManager();
 	revel.fbAuthManager.beginListening(()=>{

@@ -99,10 +99,13 @@ body {
 }
 
 .emptyPage{
-    height: 170px;
+    height: 180px;
     width: auto;
     background: #DDDDDD70;
     color: black;
+    text-align:center;
+    font-size: larger;
+    font-family: 'Permanent Marker', cursive;
 }
 
 .card{
@@ -149,7 +152,6 @@ body {
     border-radius: 50%;
     align-self: center;
     height: 60%;
-
 }
 
 .item{
