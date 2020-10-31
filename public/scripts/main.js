@@ -12,11 +12,12 @@ revel.FB_KEY_ISCHECKED = "isChecked";
 revel.FB_KEY_JOURNAL = "journalEntry";
 revel.fbBucketListManager = null;
 revel.pages = {
-	"friendsPage" : "friends.html",
-	"ExpandedList" : "expandedList.html",
-	"Index" : "index.html",
-	"Profile" : "profile.html",
-	"Timeline" : "timeline.html",
+	"FRIENDS" : "friends",
+	"EXPANDED_LIST" : "expandedList",
+	"INDEX" : "index",
+	"PROFILE" : "profile",
+	"TIMELINE" : "timeline",
+	"MAIN" : "main"
 }
 
 
@@ -163,10 +164,10 @@ revel.FbAuthManager = class {
 };
 
 revel.checkForRedirects = function() {
-	if(revel.fbAuthManager.isSignedIn && revel.onIndex) {
+	if(revel.fbAuthManager.isSignedIn && revel.page == revel.pages.INDEX) {
 		location.href = "/main.html";
 	}
-	if(!revel.fbAuthManager.isSignedIn && !revel.onIndex) {
+	if(!revel.fbAuthManager.isSignedIn && revel.page != revel.pages.INDEX) {
 		location.href = "/";
 	}
 };
@@ -224,7 +225,7 @@ revel.main = function () {
 
 	if(document.querySelector("#listPage")){
 		console.log("You are on list page");
-		revel.fbBucketListManager = new revel.FbBucketListManager();
+		// revel.fbBucketListManager = new revel.FbBucketListManager();
 		// new rhit.ListPageController();
 	}
 	

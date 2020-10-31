@@ -96,7 +96,7 @@ body {
 .input, .input:active, .input:focus{
     background: transparent;
     border:transparent;
-    font-size: larger;
+    /* font-size: larger; */
 }
 
 .emptyPage{
@@ -124,10 +124,55 @@ body {
     box-shadow: 7px 7px 7px rgba(33,33,33,.7);
 }
 
+#expandedList{
+    height: calc(90vh - 75px);
+    width: 70vw;
+    background-color: #96C7CA;
+    margin:20px;
+    padding: 5px 40px;
+    display: inline-flex;
+    font-family: 'Permanent Marker', cursive;
+    /* Firefox */
+    -moz-box-shadow:7px 7px 7px rgba(33,33,33,1);
+    /* Safari+Chrome */
+    -webkit-box-shadow: 7px 7px 7px rgba(33,33,33,.7);
+    /* Opera */
+    box-shadow: 7px 7px 7px rgba(33,33,33,.7);
+}
+
+.list-items {
+    font-family: 'Handlee', cursive;
+}
+
+#expandedList .card-title {
+    text-align: center;
+    font-size: 3em;
+    width: 100%;
+}
+
+.list-items label {
+    display: inline-block;
+    padding-right: 10px;
+    white-space: nowrap;
+    height: 100%;
+    width:100%;
+}
+
+.list-items input {
+    font-size: 1.25rem;
+    padding:0;
+    margin:0;
+    width: 100%;
+    vertical-align: middle;
+    /* color: grey; */
+}
+
 #listPage{
-    margin-top:10px;
-    padding-top: 80px;
-  }
+    margin: 0;
+    padding: 80px 15px 0 15px;
+    width:100%;
+    height:100%;
+}
 
 #backgroundHolder{
     background: url(../images/boardBackground1.jpg) no-repeat center center fixed;
@@ -181,6 +226,10 @@ body {
     width: 100%;
 }
 
+.hidden, #expandedList.hidden {
+    display: none;
+}
+
 @media (max-width: 575px) {
     #loginTitle {
         font-size: 5em;
@@ -198,4 +247,10 @@ body {
     color: bisque;
     box-shadow: 0 0 0 10px, 10px -10px 0 10px, 32px 0 0 20px, 32px 0 20px, -5px 5px 0 10px, 20px -12px 0 11px;
     animation: b .3s forwards;
+}
+
+#expandedList .checkbox label .checkbox-decorator, #expandedList label.checkbox-inline .checkbox-decorator {
+    position: relative;
+    margin:0;
+    padding:0;
 }
