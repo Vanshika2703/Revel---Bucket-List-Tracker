@@ -66,6 +66,52 @@ revel.ListPageController = class {
 	}         
 }
 
+revel.detailPageController = class {
+	constructor() {
+		// document.querySelector("#submitAddQuote").onclick = (event) =>{}
+		document.querySelector("#back").addEventListener("click",(event)=>{
+			const list = newList(1,document.querySelector("#inputTitle").value,document.querySelector("#inputItem").value);
+			const title = document.querySelector("#inputTitle").value;
+			const item = document.querySelector("#inputItem").value;
+			
+		});
+
+		$("#newListModal").on("show.bs.modal", (event) => {
+			document.querySelector("#inputTitle").value = "";
+			document.querySelector("#inputItem").value = "";
+		});
+	}
+	updateList() {
+		//make a new quote list container
+		const newList = htmlToElement('<div id="listContainer"></div>');
+		//fill them with quote cards
+			const newCard = this._createCard(list.title, list.item);
+			newList.appendChild(newCard);
+		//remove the old one
+		const oldList = document.querySelector("#listContainer");
+		oldList.removeAttribute("id");
+		oldList.hidden = true;
+		// put in the new one
+		oldList.parentElement.appendChild(newList);
+	}
+
+	_createCard(title, item){
+		return htmlToElement(`<div class="card">
+        <div class="card-body">
+          <h5 class="card-title">${title}</h5>
+          ${this._createItems(items)}
+        </div>
+      </div>`);
+	}
+	_createItems(items){
+		let itemHtml = "";
+		items.forEach(item => {
+			itemHtml += `<div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>${item}</h5> </label> </div>`
+		});
+		return itemHtml;
+	}         
+}
+
 revel.List = class {
 	constructor(id, title,items) {
 	  this.id = id;
