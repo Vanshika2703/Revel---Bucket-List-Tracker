@@ -63,7 +63,7 @@ revel.ListPageController = class {
 			itemHtml += `<div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>${item}</h5> </label> </div>`
 		});
 		return itemHtml;
-	}         
+	}       
 }
 
 revel.detailPageController = class {
