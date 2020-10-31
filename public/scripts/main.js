@@ -180,13 +180,17 @@ revel.FbBucketListManager = class {
 	addList(title,items) {  
 		console.log(`${title}, ${items}`);	
 		// Add a new document with a generated id.
-		this._ref.add({
+		let addItems = {
 			[revel.FB_KEY_TITLE] : title,
-			// items.forEach(item => {
-			 	[revel.FB_COLLECTION_ITEMS.FB_KEY_DESCRIPTION] : item
-			// })
-			[rhit.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-		})
+			[rhit.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now()
+		}
+		addItems = items.reduce((prev,next) => {
+			return {
+				...prev,
+				[revel.FB_COLLECTION_ITEMS.FB_KEY_DESCRIPTION] : next
+			}
+	   	}, addItems);
+		this._ref.add()
 		.then(function(docRef) {
 			console.log("Document written with ID: ", docRef.id);
 		})
