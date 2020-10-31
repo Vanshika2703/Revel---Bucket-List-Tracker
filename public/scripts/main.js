@@ -53,14 +53,14 @@ revel.ListPageController = class {
 		return htmlToElement(`<div class="card">
         <div class="card-body">
           <h5 class="card-title">${title}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">${items}</h6>
+          ${this._createItems(items)}
         </div>
       </div>`);
 	}
 	_createItems(items){
 		let itemHtml = "";
 		items.forEach(item => {
-			itemHtml += `<label> <input type="checkbox"> <h5>${item}</h5> </label>`
+			itemHtml += `<div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>${item}</h5> </label> </div>`
 		});
 		return itemHtml;
 	}

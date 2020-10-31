@@ -15,6 +15,7 @@ body {
 
 .page-container {
     margin-top: 75px;
+    width: auto;
 }
 
 .side-nav {
@@ -124,7 +125,7 @@ body {
 }
 
 #listPage{
-    margin:10px 0px;
+    margin-top:10px;
     padding-top: 80px;
   }
 
@@ -169,4 +170,10 @@ body {
         width: 9rem;
         margin:10px;
     }
+}
+
+.checkbox label input[type=checkbox]:checked+.checkbox-decorator .check:before, label.checkbox-inline input[type=checkbox]:checked+.checkbox-decorator .check:before {
+    color: bisque;
+    box-shadow: 0 0 0 10px, 10px -10px 0 10px, 32px 0 0 20px, 32px 0 20px, -5px 5px 0 10px, 20px -12px 0 11px;
+    animation: b .3s forwards;
 }
