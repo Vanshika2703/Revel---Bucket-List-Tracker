@@ -31,6 +31,7 @@ body {
     height: 30%;
     max-height: 250px;
     background-color: #86B7BA;
+    padding: 20px;
 }
 
 .navbar-collapse {
@@ -63,6 +64,7 @@ body {
     display: inline-block;
     bottom: 60px;
 }
+
 #fab {
     background: gray;
     color: white;
@@ -96,13 +98,26 @@ body {
     font-size: larger;
 }
 
+.emptyPage{
+    height: 170px;
+    width: auto;
+    background: #DDDDDD70;
+    color: black;
+}
+
 .card{
     height: 25rem;
     width: 18rem;
     background-color: #96C7CA;
     margin:20px;
-    display: inline-block;
+    display: inline-flex;
     font-family: 'Permanent Marker', cursive;
+    /* Firefox */
+    -moz-box-shadow:7px 7px 7px rgba(33,33,33,1);
+    /* Safari+Chrome */
+    -webkit-box-shadow: 7px 7px 7px rgba(33,33,33,.7);
+    /* Opera */
+    box-shadow: 7px 7px 7px rgba(33,33,33,.7);
 }
 
 #listPage{
@@ -111,10 +126,10 @@ body {
   }
 
 #backgroundHolder{
-    background: url(../images/boardBackground.jpg) no-repeat center center fixed;
-  background-size: cover;
-  height: 100%;
-  overflow: hidden;
+    background: url(../images/boardBackground1.jpg) no-repeat center center fixed;
+    background-size: cover;
+    height: 100%;
+    overflow: hidden;
 }
 
 #loginPage {
@@ -128,6 +143,17 @@ body {
     text-align: center;
     font-size: 10em;
     font-family: 'Permanent Marker', cursive;
+}
+
+.profile-picture {
+    border-radius: 50%;
+    align-self: center;
+    height: 60%;
+
+}
+
+.item{
+    display: inline-block;
 }
 
 @media (max-width: 575px) {

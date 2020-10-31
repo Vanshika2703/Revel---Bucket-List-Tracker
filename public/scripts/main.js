@@ -110,6 +110,9 @@ revel.FbAuthManager = class {
 	get uid() {
 		return this._user.uid;
 	}
+	get photoURL() {
+		return this._user.photoURL;
+	}
 };
 
 revel.checkForRedirects = function() {
