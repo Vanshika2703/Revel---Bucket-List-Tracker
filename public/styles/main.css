@@ -177,6 +177,10 @@ body {
     justify-content: center;
 }
 
+#listContainer {
+    width: 100%;
+}
+
 @media (max-width: 575px) {
     #loginTitle {
         font-size: 5em;
