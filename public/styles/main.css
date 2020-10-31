@@ -148,12 +148,29 @@ body {
 .profile-picture {
     border-radius: 50%;
     align-self: center;
-    height: 60%;
+}
 
+.upper-side-nav > .profile-picture {
+    height: 60%;
+}
+
+#profilePictureContainer > .profile-picture {
+    height: 80%;
 }
 
 .item{
     display: inline-block;
+}
+
+#profilePage {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+#profilePictureContainer {
+    height: 250px;
+    display: flex;
+    justify-content: center;
 }
 
 @media (max-width: 575px) {
