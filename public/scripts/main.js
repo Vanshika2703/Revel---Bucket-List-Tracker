@@ -24,9 +24,9 @@ revel.ListPageController = class {
 	constructor() {
 		// document.querySelector("#submitAddQuote").onclick = (event) =>{}
 		document.querySelector("#back").addEventListener("click",(event)=>{
-		//	const list = new List(1,document.querySelector("#inputTitle").value,document.querySelector("#inputItem").value);
+			const list = newList(1,document.querySelector("#inputTitle").value,document.querySelector("#inputItem").value);
 			const title = document.querySelector("#inputTitle").value;
-			const items = document.querySelector("#inputItem").value;
+			const item = document.querySelector("#inputItem").value;
 			
 		});
 
@@ -36,9 +36,9 @@ revel.ListPageController = class {
 		});
 	}
 	updateList() {
-		//make a new bucket list container
+		//make a new quote list container
 		const newList = htmlToElement('<div id="listContainer"></div>');
-		//fill them with list cards
+		//fill them with quote cards
 			const newCard = this._createCard(list.title, list.item);
 			newList.appendChild(newCard);
 		//remove the old one
@@ -49,7 +49,7 @@ revel.ListPageController = class {
 		oldList.parentElement.appendChild(newList);
 	}
 
-	_createCard(title, items){
+	_createCard(title, item){
 		return htmlToElement(`<div class="card">
         <div class="card-body">
           <h5 class="card-title">${title}</h5>
@@ -63,21 +63,11 @@ revel.ListPageController = class {
 			itemHtml += `<div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>${item}</h5> </label> </div>`
 		});
 		return itemHtml;
-	}
-   }
-
-revel.List = class {
-	constructor(id, desc, pic, isChecked, journalEntry) {
-	  this.id = id;
-	  this.desc = desc;
-	  this.pic = pic;
-	  this.isChecked = isChecked;
-	  this.journalEntry = journalEntry;
-	}
+	}         
 }
 
-revel.Item = class {
-	constructor(id, title, items) {
+revel.List = class {
+	constructor(id, title,items) {
 	  this.id = id;
 	  this.title = title;
 	  this.items = items;  

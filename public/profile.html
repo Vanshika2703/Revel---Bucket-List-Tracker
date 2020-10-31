@@ -12,11 +12,11 @@
 
 <body>
   <div id="navPlaceholder"></div>
-  <div id="listPage" class="container page-container row">
-    <div id="profileImg" style="background-color: aqua;">
-    <img src="" alt="profile Picture"></div>
-    <div id="displayName" style="background-color: aqua;"></div>
-    <div id="stats" style="background-color:green;"></div>
+  <div id="profilePage" class="container page-container">
+    <div id="profilePictureContainer"></div>
+    <div id="displayName"></div>
+    <br>
+    <div id="stats">stats</div>
   </div>
 
   <script src="scripts/jquery.min.js"></script>
@@ -29,6 +29,7 @@
   <script src="/__/firebase/7.18.0/firebase-firestore.js"></script>
   <script src="/__/firebase/init.js"></script>
   <script src="scripts/main.js"></script>
+  <script src="scripts/profile.js"></script>
   <script>
     $(() => {
       $("#navPlaceholder").load("navBar.html");
