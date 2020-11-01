@@ -32,25 +32,43 @@ function htmlToElement(html) {
 
 revel.ListPageController = class {
 	constructor() {
-		// document.querySelector("#submitAddQuote").onclick = (event) =>{}
 		document.querySelector("#back").addEventListener("click",(event)=>{
-			const list = newList(1,document.querySelector("#inputTitle").value,document.querySelector("#inputItem").value);
 			const title = document.querySelector("#inputTitle").value;
-			const item = document.querySelector("#inputItem").value;
-			
+			const item = document.querySelectorAll("#itemsBox .inputItem").value;
+			console.log(`title: ${title}, item: ${item}`)
 		});
 
 		$("#newListModal").on("show.bs.modal", (event) => {
 			document.querySelector("#inputTitle").value = "";
-			document.querySelector("#inputItem").value = "";
+			document.querySelector(".inputItem").value = "";
 		});
+
+		document.querySelector("#addItem").addEventListener("click",(event)=>{
+			console.log("clicked add item");
+			document.querySelector("#itemsBox").appendChild(this._createInputItem());
+		  console.log("new list item entry place added");
+		});
+		//start listening
+		revel.fbBucketListManager.beginListening(this.updateList.bind(this));
 	}
 	updateList() {
+		console.log(`${revel.fbBucketListManager.length}`);
 		//make a new quote list container
 		const newList = htmlToElement('<div id="listContainer"></div>');
 		//fill them with quote cards
-			const newCard = this._createCard(list.title, list.item);
-			newList.appendChild(newCard);
+		if(revel.fbBucketListManager.length == 0){
+			newList.appendChild(this._createEmpty());
+		}else{
+			for(let i = 0; i<revel.fbBucketListManager.length;i++){
+				const bl = revel.fbBucketListManager.getListAtIndex(i);
+				const newCard = this._createCard(bl);
+				// newCard.onclick = (event) =>{
+				// 	rhit.storage.setMovieQuoteId(bl.id);
+				// 	//window.location.href = "/moviequote.html";
+				// };
+				newList.appendChild(newCard);
+			}
+		}
 		//remove the old one
 		const oldList = document.querySelector("#listContainer");
 		oldList.removeAttribute("id");
@@ -59,7 +77,7 @@ revel.ListPageController = class {
 		oldList.parentElement.appendChild(newList);
 	}
 
-	_createCard(title, item){
+	_createCard(title, items){
 		return htmlToElement(`<div class="card">
         <div class="card-body">
           <h5 class="card-title">${title}</h5>
@@ -74,7 +92,26 @@ revel.ListPageController = class {
 			itemHtml += `<div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>${item}</h5> </label> </div>`
 		});
 		return itemHtml;
-	}         
+	}
+	
+	_createInputItem(){
+		return htmlToElement(`<div class="checkbox col">
+		<div class="row checkbox"> 
+			<label> <input type="checkbox" class="item" style="width:20px;height:20px;"> 
+				<input type="text" class="form-control inputItem"> 
+			</label> 
+		</div>`);
+	}
+
+	_createEmpty(){
+		return htmlToElement(`<div class="emptyPage justify-content-center">
+        <br><br>
+        You have no lists
+        <br>
+        Click the '+' icon to add a new list
+        <br><br>
+      </div>`);
+	}
 }
 
 revel.expandedListController = class {
@@ -186,16 +223,6 @@ revel.FbBucketListManager = class {
 			[revel.FB_KEY_TITLE] : title,
 			[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now()
 		}
-		// addItems = items.reduce((prev,next) => {
-		// 	return {
-		// 		...prev,
-		// 		[revel.FB_KEY_DESCRIPTION] : next,
-		// 		[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-		// 		[revel.FB_KEY_PICTURE] : null,
-		// 		[revel.FB_KEY_JOURNAL] : null,
-		// 		[revel.FB_KEY_ISCHECKED] : null
-		// 	}
-	   	// }, addItems);
 		this._ref.add(addItems)
 		.then(function(docRef) {
 			let _itemsRef = docRef.collection(revel.FB_COLLECTION_ITEMS);
@@ -246,7 +273,7 @@ revel.main = function () {
 	if(document.querySelector("#listPage")){
 		console.log("You are on list page");
 		revel.fbBucketListManager = new revel.FbBucketListManager();
-		// new revel.ListPageController();
+		new revel.ListPageController();
 	}
 	
 	revel.fbAuthManager = new revel.FbAuthManager();
