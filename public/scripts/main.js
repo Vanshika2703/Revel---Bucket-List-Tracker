@@ -174,24 +174,39 @@ revel.checkForRedirects = function() {
 revel.FbBucketListManager = class {
 	constructor() {
 	  this._documentSnapshots = [];
-	  this._ref = firebase.firestore().collection(rhit.FB_COLLECTION_LISTS);
+	  this._ref = firebase.firestore().collection(revel.FB_COLLECTION_LISTS);
 	  this._unsubscribe = null;
 	}
 	addList(title,items) {  
 		console.log(`${title}, ${items}`);	
-		// Add a new document with a generated id.
+		// Add a new document with a generated id.\
+
 		let addItems = {
 			[revel.FB_KEY_TITLE] : title,
-			[rhit.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now()
+			[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now()
 		}
-		addItems = items.reduce((prev,next) => {
-			return {
-				...prev,
-				[revel.FB_COLLECTION_ITEMS.FB_KEY_DESCRIPTION] : next
-			}
-	   	}, addItems);
-		this._ref.add()
+		// addItems = items.reduce((prev,next) => {
+		// 	return {
+		// 		...prev,
+		// 		[revel.FB_KEY_DESCRIPTION] : next,
+		// 		[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+		// 		[revel.FB_KEY_PICTURE] : null,
+		// 		[revel.FB_KEY_JOURNAL] : null,
+		// 		[revel.FB_KEY_ISCHECKED] : null
+		// 	}
+	   	// }, addItems);
+		this._ref.add(addItems)
 		.then(function(docRef) {
+			let _itemsRef = docRef.collection(revel.FB_COLLECTION_ITEMS);
+			items.forEach(item => {
+				_itemsRef.add({
+				[revel.FB_KEY_DESCRIPTION] : item,
+				[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+				[revel.FB_KEY_PICTURE] : null,
+				[revel.FB_KEY_JOURNAL] : null,
+				[revel.FB_KEY_ISCHECKED] : false}
+				)
+			});
 			console.log("Document written with ID: ", docRef.id);
 		})
 		.catch(function(error) {
@@ -200,10 +215,10 @@ revel.FbBucketListManager = class {
 	}
 	beginListening(changeListener) {    
 		this._unsubscribe = this._ref
-		.orderBy(rhit.FB_KEY_LAST_TOUCHED, "desc")
+		.orderBy(revel.FB_KEY_LAST_TOUCHED, "desc")
 		.limit(50)
 		.onSnapshot((querySnapshot) => {
-				console.log("MovieQuote update!");
+				console.log("BucketLists updated!");
 				this._documentSnapshots = querySnapshot.docs;
 				changeListener();
 			});
@@ -215,12 +230,12 @@ revel.FbBucketListManager = class {
 	get length() {    
 		return this._documentSnapshots.length;
 	}
-	getMovieQuoteAtIndex(index) {
+	getListAtIndex(index) {
 		const docSnapshot = this._documentSnapshots[index];
-		const mq = new rhit.MovieQuote(docSnapshot.id,
-			docSnapshot.get(rhit.FB_KEY_QUOTE),
-			docSnapshot.get(rhit.FB_KEY_MOVIE));
-		return mq;
+		const bl = new revel.List(docSnapshot.id,
+			docSnapshot.get(revel.FB_KEY_TITLE),
+			docSnapshot.get(revel.FB_COLLECTION_ITEMS));
+		return bl;
 	}
    }
 
@@ -230,7 +245,7 @@ revel.main = function () {
 	if(document.querySelector("#listPage")){
 		console.log("You are on list page");
 		revel.fbBucketListManager = new revel.FbBucketListManager();
-		// new rhit.ListPageController();
+		// new revel.ListPageController();
 	}
 	
 	revel.fbAuthManager = new revel.FbAuthManager();
