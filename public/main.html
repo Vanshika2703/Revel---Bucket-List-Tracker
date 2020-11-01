@@ -14,16 +14,16 @@
 <body>
   <div id="backgroundHolder">
   <div id="navPlaceholder"></div>
-  <div id="listPage" class="container page-container">
-    <div id="listContainer">
-      <div class="emptyPage justify-content-center">
+  <div id="listPage" class="page-container">
+    <div id="listContainer" class="hidden">
+      <!-- <div class="emptyPage justify-content-center">
         <br><br>
         No Lists yet!
         <br>
         Click the '+' icon to add a new list
         <br><br>
-      </div>
-      <!-- <div class="card">
+      </div> -->
+      <div class="card">
         <div class="card-body">
           <h4 class="card-title">title</h4>
           <div class="checkbox col">
@@ -41,7 +41,19 @@
             <div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>ITEM 1</h5> </label> </div>
             <div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>ITEM 1</h5> </label> </div>
           </div>
-      </div> -->
+        </div>
+      </div>
+    </div>
+    <div id="expandedList" class="hidden">
+      <div class="card-body">
+        <input class="input card-title" placeholder="ENTER TITLE">
+        <div class="checkbox col list-items">
+          <div class="row checkbox"> <label> <input type="checkbox" class="item"> <input class="input" placeholder="ENTER BUCKET LIST ITEM"> </label> </div>
+        </div>
+        <button id="addItemButton" type="button" class="btn bmd-btn-fab">
+          <i class="material-icons">add</i>
+        </button>
+      </div>
     </div>
   </div>
   <button id="fab" type="button" class="btn bmd-btn-fab" data-toggle="modal" data-target="#newListModal">
@@ -92,7 +104,8 @@
     });
   </script>
   <script src="scripts/main.js"></script>
-  </div>
+  <script> revel.page = revel.pages.MAIN </script>
+  <script src="scripts/expandedList.js"></script>
 </body>
 
 </html>
