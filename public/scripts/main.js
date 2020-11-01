@@ -67,10 +67,14 @@ revel.ListPageController = class {
 			for(let i = 0; i<revel.fbBucketListManager.length;i++){
 				const bl = await revel.fbBucketListManager.getListAtIndex(i);
 				const newCard = this._createCard(bl.title, bl.items);
-				// newCard.onclick = (event) =>{
-				// 	rhit.storage.setMovieQuoteId(bl.id);
-				// 	window.location.href = "/moviequote.html";
-				// };
+				newCard.onclick = (event) => {
+					if(revel.page == revel.pages.MAIN && !event.switchingToMain && 
+						!Array.from(document.querySelectorAll(".card-body>div")).some(x=>x.contains(event.target))){
+						event.switchingToExpanded = true;
+						revel.page = revel.pages.EXPANDED_LIST;
+						revel.showMainPageContents();
+					}
+				}
 				newList.appendChild(newCard);
 			}
 		}

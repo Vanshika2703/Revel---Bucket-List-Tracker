@@ -1,11 +1,4 @@
-document.querySelectorAll(".card").forEach(card => card.onclick = (event) => {
-    if(revel.page == revel.pages.MAIN && !event.switchingToMain && 
-        !Array.from(document.querySelectorAll(".card-body>div")).some(x=>x.contains(event.target))){
-        event.switchingToExpanded = true;
-        revel.page = revel.pages.EXPANDED_LIST;
-        revel.showMainPageContents();
-    }
-});
+// document.querySelectorAll(".card").forEach(card => card);
 
 document.querySelector("#listPage").onclick = (event) => {
     if(revel.page == revel.pages.EXPANDED_LIST && !event.switchingToExpanded && !document.querySelector("#expandedList").contains(event.target)){
