@@ -10,6 +10,7 @@ revel.FB_KEY_DESCRIPTION = "Description";
 revel.FB_KEY_PICTURE = "Picture";
 revel.FB_KEY_ISCHECKED = "isChecked";
 revel.FB_KEY_JOURNAL = "journalEntry";
+revel.FB_KEY_USERS = "users";
 revel.fbBucketListManager = null;
 revel.pages = {
 	"FRIENDS" : "friends",
@@ -182,6 +183,12 @@ revel.initializePage = function() {
 		const uid = urlParams.get("uid");
 		console.log("main page for ", uid);
 	}
+
+	if(document.querySelector("#listPage")){
+		console.log("You are on list page");
+		revel.fbBucketListManager = new revel.FbBucketListManager();
+		new revel.ListPageController();
+	}
 };
 
 revel.FbAuthManager = class {
@@ -217,7 +224,7 @@ revel.checkForRedirects = function() {
 revel.FbBucketListManager = class {
 	constructor() {
 	  this._documentSnapshots = [];
-	  this._ref = firebase.firestore().collection(revel.FB_COLLECTION_LISTS);
+	  this._ref = firebase.firestore().collection(revel.FB_KEY_USERS).doc(revel.fbAuthManager.uid).collection(revel.FB_COLLECTION_LISTS);
 	  this._unsubscribe = null;
 	}
 	addList(title,items) {  
@@ -285,12 +292,6 @@ revel.FbBucketListManager = class {
 
 revel.main = function () {
 	console.log("Ready");
-
-	if(document.querySelector("#listPage")){
-		console.log("You are on list page");
-		revel.fbBucketListManager = new revel.FbBucketListManager();
-		new revel.ListPageController();
-	}
 	
 	revel.fbAuthManager = new revel.FbAuthManager();
 	revel.fbAuthManager.beginListening(()=>{
