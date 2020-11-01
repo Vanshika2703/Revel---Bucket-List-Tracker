@@ -274,7 +274,7 @@ revel.FbBucketListManager = class {
 		const docSnapshot = this._documentSnapshots[index];
 		console.log('myDoc title :>> ', docSnapshot.get(revel.FB_KEY_TITLE));
 		const items = [];
-		await firebase.firestore().collection(revel.FB_COLLECTION_LISTS).doc(docSnapshot.id)
+		await this._ref.doc(docSnapshot.id)
 			.collection(revel.FB_COLLECTION_ITEMS).get()
 			.then(response =>{
 				response.forEach(x=> items.push({
