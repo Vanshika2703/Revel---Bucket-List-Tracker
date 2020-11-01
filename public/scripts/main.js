@@ -34,8 +34,12 @@ revel.ListPageController = class {
 	constructor() {
 		document.querySelector("#back").addEventListener("click",(event)=>{
 			const title = document.querySelector("#inputTitle").value;
-			const item = document.querySelectorAll("#itemsBox .inputItem").value;
-			console.log(`title: ${title}, item: ${item}`)
+			const items = [];
+			document.querySelectorAll("#itemsBox div.row.checkbox input.inputItem").forEach(item => {
+				items.push(item.value);				
+			});
+			console.log(`title: ${title}, item: ${items}`)
+			revel.fbBucketListManager.addList(title,items);
 		});
 
 		$("#newListModal").on("show.bs.modal", (event) => {
@@ -64,7 +68,7 @@ revel.ListPageController = class {
 				const newCard = this._createCard(bl);
 				// newCard.onclick = (event) =>{
 				// 	rhit.storage.setMovieQuoteId(bl.id);
-				// 	//window.location.href = "/moviequote.html";
+				// 	window.location.href = "/moviequote.html";
 				// };
 				newList.appendChild(newCard);
 			}
@@ -95,12 +99,11 @@ revel.ListPageController = class {
 	}
 	
 	_createInputItem(){
-		return htmlToElement(`<div class="checkbox col">
-		<div class="row checkbox"> 
-			<label> <input type="checkbox" class="item" style="width:20px;height:20px;"> 
-				<input type="text" class="form-control inputItem"> 
-			</label> 
-		</div>`);
+		return htmlToElement(`<div class="row checkbox"> 
+				<label> <input type="checkbox" class="item" style="width:20px;height:20px;"> 
+					<input type="text" class="form-control inputItem"> 
+				</label> 
+			</div>`);
 	}
 
 	_createEmpty(){
@@ -118,7 +121,7 @@ revel.expandedListController = class {
 	constructor() {
 		// document.querySelector("#submitAddQuote").onclick = (event) =>{}
 		document.querySelector("#back").addEventListener("click",(event)=>{
-			const list = newList(1,document.querySelector("#inputTitle").value,document.querySelector("#inputItem").value);
+			//const list = newList(1,document.querySelector("#inputTitle").value,document.querySelector("#inputItem").value);
 			const title = document.querySelector("#inputTitle").value;
 			const item = document.querySelector("#inputItem").value;
 			
@@ -260,9 +263,11 @@ revel.FbBucketListManager = class {
 	}
 	getListAtIndex(index) {
 		const docSnapshot = this._documentSnapshots[index];
+		const items = firebase.firestore().collection(revel.FB_COLLECTION_LISTS).doc(document.id).collection(revel.FB_COLLECTION_ITEMS).doc();
+		console.log('items :>> ', items);
 		const bl = new revel.List(docSnapshot.id,
 			docSnapshot.get(revel.FB_KEY_TITLE),
-			docSnapshot.get(revel.FB_COLLECTION_ITEMS));
+			docSnapshot.collection(revel.FB_COLLECTION_ITEMS));
 		return bl;
 	}
    }
