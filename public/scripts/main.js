@@ -55,7 +55,7 @@ revel.ListPageController = class {
 		//start listening
 		revel.fbBucketListManager.beginListening(this.updateList.bind(this));
 	}
-	updateList() {
+	async updateList() {
 		console.log(`${revel.fbBucketListManager.length}`);
 		//make a new quote list container
 		const newList = htmlToElement('<div id="listContainer"></div>');
@@ -64,8 +64,8 @@ revel.ListPageController = class {
 			newList.appendChild(this._createEmpty());
 		}else{
 			for(let i = 0; i<revel.fbBucketListManager.length;i++){
-				const bl = revel.fbBucketListManager.getListAtIndex(i);
-				const newCard = this._createCard(bl);
+				const bl = await revel.fbBucketListManager.getListAtIndex(i);
+				const newCard = this._createCard(bl.title, bl.items);
 				// newCard.onclick = (event) =>{
 				// 	rhit.storage.setMovieQuoteId(bl.id);
 				// 	window.location.href = "/moviequote.html";
@@ -82,6 +82,8 @@ revel.ListPageController = class {
 	}
 
 	_createCard(title, items){
+		console.log("title: ", title);
+		console.log("items: ", items);
 		return htmlToElement(`<div class="card">
         <div class="card-body">
           <h5 class="card-title">${title}</h5>
@@ -93,7 +95,7 @@ revel.ListPageController = class {
 	_createItems(items){
 		let itemHtml = "";
 		items.forEach(item => {
-			itemHtml += `<div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>${item}</h5> </label> </div>`
+			itemHtml += `<div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>${item[revel.FB_KEY_DESCRIPTION]}</h5> </label> </div>`
 		});
 		return itemHtml;
 	}
@@ -261,13 +263,22 @@ revel.FbBucketListManager = class {
 	get length() {    
 		return this._documentSnapshots.length;
 	}
-	getListAtIndex(index) {
+	async getListAtIndex(index) {
 		const docSnapshot = this._documentSnapshots[index];
-		const items = firebase.firestore().collection(revel.FB_COLLECTION_LISTS).doc(document.id).collection(revel.FB_COLLECTION_ITEMS).doc();
+		console.log('myDoc title :>> ', docSnapshot.get(revel.FB_KEY_TITLE));
+		const items = [];
+		await firebase.firestore().collection(revel.FB_COLLECTION_LISTS).doc(docSnapshot.id)
+			.collection(revel.FB_COLLECTION_ITEMS).get()
+			.then(response =>{
+				response.forEach(x=> items.push({
+					id: x.id,
+					...x.data()
+				}));
+			});
+		
 		console.log('items :>> ', items);
-		const bl = new revel.List(docSnapshot.id,
-			docSnapshot.get(revel.FB_KEY_TITLE),
-			docSnapshot.collection(revel.FB_COLLECTION_ITEMS));
+		const bl = {title: docSnapshot.get(revel.FB_KEY_TITLE),
+			items: items};
 		return bl;
 	}
    }
