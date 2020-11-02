@@ -1,5 +1,6 @@
 
 var revel = revel || {};
+revel.storage = revel.storage || {};
 
 revel.FB_COLLECTION_LISTS = "lists";
 revel.FB_KEY_TITLE = "Title";
@@ -34,18 +35,39 @@ function htmlToElement(html) {
 revel.ListPageController = class {
 	constructor() {
 		document.querySelector("#back").addEventListener("click",(event)=>{
+			const blId = revel.storage.getbucketListId();
 			const title = document.querySelector("#inputTitle").value;
 			const items = [];
-			document.querySelectorAll("#itemsBox div.row.checkbox input.inputItem").forEach(item => {
+			document.querySelectorAll("#itemsBox div.row.checkbox input.input").forEach(item => {
 				items.push(item.value);				
 			});
+			if(blId==0){
+				console.log('blId :>> ', blId);
+				if(title!=""){
 			console.log(`title: ${title}, item: ${items}`)
 			revel.fbBucketListManager.addList(title,items);
+			revel.page = revel.pages.MAIN;
+			revel.showMainPageContents();
+			}
+			else if(items.length!=0 && title==""){
+				alert("please fill in the title before you save")
+			}else{
+				revel.page = revel.pages.MAIN;
+				revel.showMainPageContents();
+			}
+		}
+			else{
+				console.log("existing");
+				revel.fbBucketListManager.update(blId,title,items);
+				revel.page = revel.pages.MAIN;
+				revel.showMainPageContents();
+			}
 		});
 
-		$("#newListModal").on("show.bs.modal", (event) => {
-			document.querySelector("#inputTitle").value = "";
-			document.querySelector(".inputItem").value = "";
+		document.querySelector("#fab").addEventListener("click",(even)=>{
+			sessionStorage.clear();
+			revel.page = revel.pages.EXPANDED_LIST;
+			revel.showMainPageContents();
 		});
 
 		document.querySelector("#addItem").addEventListener("click",(event)=>{
@@ -53,6 +75,14 @@ revel.ListPageController = class {
 			document.querySelector("#itemsBox").appendChild(this._createInputItem());
 		  console.log("new list item entry place added");
 		});
+
+		document.querySelector("#deleteButton").addEventListener("click",(event)=>{
+			console.log("delete button clicked");
+			revel.fbBucketListManager.delete(revel.storage.getbucketListId());
+			revel.page = revel.pages.MAIN;
+			revel.showMainPageContents();
+		});
+
 		//start listening
 		revel.fbBucketListManager.beginListening(this.updateList.bind(this));
 	}
@@ -71,7 +101,10 @@ revel.ListPageController = class {
 					if(revel.page == revel.pages.MAIN && !event.switchingToMain && 
 						!Array.from(document.querySelectorAll(".card-body>div")).some(x=>x.contains(event.target))){
 						event.switchingToExpanded = true;
+						revel.storage.setbucketListId(bl.id);
 						revel.page = revel.pages.EXPANDED_LIST;
+						document.querySelector("#expandedList .card-title").value = bl.title;
+
 						revel.showMainPageContents();
 					}
 				}
@@ -107,10 +140,10 @@ revel.ListPageController = class {
 	
 	_createInputItem(){
 		return htmlToElement(`<div class="row checkbox"> 
-				<label> <input type="checkbox" class="item" style="width:20px;height:20px;"> 
-					<input type="text" class="form-control inputItem"> 
-				</label> 
-			</div>`);
+			<label> <input type="checkbox" class="item"> 
+				<input class="input" placeholder="ENTER BUCKET LIST ITEM"> 
+			</label> 
+		</div>`);
 	}
 
 	_createEmpty(){
@@ -122,52 +155,8 @@ revel.ListPageController = class {
         <br><br>
       </div>`);
 	}
-}
 
-revel.expandedListController = class {
-	constructor() {
-		// document.querySelector("#submitAddQuote").onclick = (event) =>{}
-		document.querySelector("#back").addEventListener("click",(event)=>{
-			//const list = newList(1,document.querySelector("#inputTitle").value,document.querySelector("#inputItem").value);
-			const title = document.querySelector("#inputTitle").value;
-			const item = document.querySelector("#inputItem").value;
-			
-		});
 
-		$("#newListModal").on("show.bs.modal", (event) => {
-			document.querySelector("#inputTitle").value = "";
-			document.querySelector("#inputItem").value = "";
-		});
-	}
-	updateList() {
-		//make a new quote list container
-		const newList = htmlToElement('<div id="listContainer"></div>');
-		//fill them with quote cards
-			const newCard = this._createCard(list.title, list.item);
-			newList.appendChild(newCard);
-		//remove the old one
-		const oldList = document.querySelector("#listContainer");
-		oldList.removeAttribute("id");
-		oldList.hidden = true;
-		// put in the new one
-		oldList.parentElement.appendChild(newList);
-	}
-
-	_createCard(title, item){
-		return htmlToElement(`<div class="card">
-        <div class="card-body">
-          <h5 class="card-title">${title}</h5>
-          ${this._createItems(items)}
-        </div>
-      </div>`);
-	}
-	_createItems(items){
-		let itemHtml = "";
-		items.forEach(item => {
-			itemHtml += `<div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>${item}</h5> </label> </div>`
-		});
-		return itemHtml;
-	}         
 }
 
 revel.List = class {
@@ -288,13 +277,56 @@ revel.FbBucketListManager = class {
 			});
 		
 		console.log('items :>> ', items);
-		const bl = {title: docSnapshot.get(revel.FB_KEY_TITLE),
+		const bl = {id:docSnapshot.id ,title: docSnapshot.get(revel.FB_KEY_TITLE),
 			items: items};
 		return bl;
 	}
+
+	delete(id) {
+		return this._ref.doc(id).delete();
+	}
+
+	update(id,title,items) {
+		this._ref.doc(id).update({
+			[revel.FB_KEY_TITLE]: title,
+			[revel.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+		})
+		.then(function(docRef) {
+			let _itemsRef = docRef.collection(revel.FB_COLLECTION_ITEMS);
+			items.forEach(item => {
+				_itemsRef.update({
+				[revel.FB_KEY_DESCRIPTION] : item,
+				[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+				[revel.FB_KEY_PICTURE] : null,
+				[revel.FB_KEY_JOURNAL] : null,
+				[revel.FB_KEY_ISCHECKED] : false}
+				)
+			});
+			console.log("Document successfully updated!");
+		})
+		.catch(function (error) {
+			// The document probably doesn't exist.
+			console.error("Error updating document: ", error);
+		});
+
+	}
    }
 
-revel.main = function () {
+revel.storage.BL_ID_KEY = "BL_ID_KEY";
+revel.storage.getbucketListId = function() {
+	const blId = sessionStorage.getItem(revel.storage.BL_ID_KEY);
+	if(!blId){
+		console.log("No list quote id in storage");
+		return 0;
+	}
+	return blId;
+}
+
+revel.storage.setbucketListId = function(blId) {
+	sessionStorage.setItem(revel.storage.BL_ID_KEY, blId);
+}
+   
+revel.main = function() {
 	console.log("Ready");
 	
 	revel.fbAuthManager = new revel.FbAuthManager();
