@@ -38,9 +38,10 @@ revel.ListPageController = class {
 			const blId = revel.storage.getbucketListId();
 			const title = document.querySelector("#inputTitle").value;
 			const items = [];
-			document.querySelectorAll("#itemsBox div.row.checkbox input.input").forEach(item => {
+			document.querySelectorAll("#itemsBox div.row.checkbox .input").forEach(item => {
 				items.push(item.value);				
 			});
+			console.log('items :>> ', items);
 			if(blId==0){
 				console.log('blId :>> ', blId);
 				if(title!=""){
@@ -49,7 +50,9 @@ revel.ListPageController = class {
 			revel.page = revel.pages.MAIN;
 			revel.showMainPageContents();
 			}
-			else if(items.length!=0 && title==""){
+			else if(items.length!=0 && title=="" && items[0]!=""){
+				console.log('items.length :>> ', items.length);
+				console.log('items :>> ', items);
 				alert("please fill in the title before you save")
 			}else{
 				revel.page = revel.pages.MAIN;
@@ -66,6 +69,7 @@ revel.ListPageController = class {
 
 		document.querySelector("#fab").addEventListener("click",(even)=>{
 			sessionStorage.clear();
+		//	document.querySelector("#expandedList").replaceChild("#expandedList .card-body", this._createEmptyExpandedList());
 			revel.page = revel.pages.EXPANDED_LIST;
 			revel.showMainPageContents();
 		});
@@ -78,7 +82,12 @@ revel.ListPageController = class {
 
 		document.querySelector("#deleteButton").addEventListener("click",(event)=>{
 			console.log("delete button clicked");
-			revel.fbBucketListManager.delete(revel.storage.getbucketListId());
+			const blId = revel.storage.getbucketListId();
+			if(blId == 0){
+				alert("this list can't be deleted")
+			}else{
+				revel.fbBucketListManager.delete(blId);
+			}
 			revel.page = revel.pages.MAIN;
 			revel.showMainPageContents();
 		});
@@ -154,6 +163,26 @@ revel.ListPageController = class {
         Click the '+' icon to add a new list
         <br><br>
       </div>`);
+	}
+
+	_createEmptyExpandedList(){
+		return htmlToElement(`<div class="card-body">
+        <button id="back" type="button" class="btn btn-dark">
+          <i class="material-icons justify-content-left">arrow_back</i>
+        </button>
+        <button type="button" class="close" aria-label="Close" data-toggle="modal" data-target="#confirmDeleteModal">
+          <i class="material-icons justify-content-right">delete</i>
+        </button>
+        <input class="input card-title" id="inputTitle" placeholder="ENTER TITLE">
+        <div id="itemsBox" class="checkbox col list-items">
+          <div class="row checkbox"> <label> <input type="checkbox" class="item"> <input class="input" placeholder="ENTER BUCKET LIST ITEM"> </label> </div>
+        </div>
+
+        <button id="addItem" type="button" class="btn">
+          <i class="material-icons">add</i>
+        </button>
+      </div>
+    `)
 	}
 
 
@@ -287,6 +316,7 @@ revel.FbBucketListManager = class {
 	}
 
 	update(id,title,items) {
+		console.log(`${title}, ${items}`);	
 		this._ref.doc(id).update({
 			[revel.FB_KEY_TITLE]: title,
 			[revel.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
