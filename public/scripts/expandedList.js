@@ -21,4 +21,12 @@ revel.showMainPageContents = function() {
     }
 };
 
+function doalert(checkboxElem) {
+    if (checkboxElem.checked) {
+        alert ("hi");
+    } else {
+        alert ("bye");
+    }
+}
+
 revel.showMainPageContents();

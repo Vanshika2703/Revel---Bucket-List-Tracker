@@ -114,6 +114,11 @@ revel.ListPageController = class {
 						revel.page = revel.pages.EXPANDED_LIST;
 						document.querySelector("#expandedList .card-title").value = bl.title;
 
+						let itemsBoxHtml = "";
+						bl.items.forEach(x=>itemsBoxHtml = itemsBoxHtml
+							.concat(`<div class="row checkbox"> <label> <input type="checkbox" class="item" onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> <input class="input" value="${x.Description}"> </label> </div>`));
+						document.querySelector("#itemsBox").innerHTML = itemsBoxHtml;
+
 						revel.showMainPageContents();
 					}
 				}
