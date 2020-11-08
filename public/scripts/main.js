@@ -34,61 +34,11 @@ function htmlToElement(html) {
 
 revel.ListPageController = class {
 	constructor() {
-		document.querySelector("#back").addEventListener("click",(event)=>{
-			const blId = revel.storage.getbucketListId();
-			const title = document.querySelector("#inputTitle").value;
-			const items = [];
-			document.querySelectorAll("#itemsBox div.row.checkbox .input").forEach(item => {
-				items.push({Description: item.value, id: item.id});				
-			});
-			console.log('items :>> ', items);
-			if(blId==0){
-				console.log('blId :>> ', blId);
-				if(title!=""){
-			console.log(`title: ${title}, item: ${items}`)
-			revel.fbBucketListManager.addList(title,items);
-			revel.page = revel.pages.MAIN;
-			revel.showMainPageContents();
-			}
-			else if(items.length!=0 && title=="" && items[0]!=""){
-				console.log('items.length :>> ', items.length);
-				console.log('items :>> ', items);
-				alert("please fill in the title before you save")
-			}else{
-				revel.page = revel.pages.MAIN;
-				revel.showMainPageContents();
-			}
-		}
-			else{
-				console.log("existing");
-				revel.fbBucketListManager.update(blId,title,items);
-				revel.page = revel.pages.MAIN;
-				revel.showMainPageContents();
-			}
-		});
+		
 
 		document.querySelector("#fab").addEventListener("click",(even)=>{
 			sessionStorage.clear();
-		//	document.querySelector("#expandedList").replaceChild("#expandedList .card-body", this._createEmptyExpandedList());
 			revel.page = revel.pages.EXPANDED_LIST;
-			revel.showMainPageContents();
-		});
-
-		document.querySelector("#addItem").addEventListener("click",(event)=>{
-			console.log("clicked add item");
-			document.querySelector("#itemsBox").appendChild(this._createInputItem());
-		  console.log("new list item entry place added");
-		});
-
-		document.querySelector("#deleteButton").addEventListener("click",(event)=>{
-			console.log("delete button clicked");
-			const blId = revel.storage.getbucketListId();
-			if(blId == 0){
-				alert("this list can't be deleted")
-			}else{
-				revel.fbBucketListManager.delete(blId);
-			}
-			revel.page = revel.pages.MAIN;
 			revel.showMainPageContents();
 		});
 
@@ -112,12 +62,12 @@ revel.ListPageController = class {
 						event.switchingToExpanded = true;
 						revel.storage.setbucketListId(bl.id);
 						revel.page = revel.pages.EXPANDED_LIST;
+						revel.showMainPageContents();
+
 						document.querySelector("#expandedList .card-title").value = bl.title;
 
 						let itemsBoxHtml = this._createItems(bl.items);
 						document.querySelector("#itemsBox").innerHTML = itemsBoxHtml;
-
-						revel.showMainPageContents();
 					}
 				}
 				newList.appendChild(newCard);
@@ -153,16 +103,6 @@ revel.ListPageController = class {
 	_createItem(item){
 		return `<div class="row checkbox"> <label> <input type="checkbox" class="item" onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> <input id="${item.id}" class="input" value="${item.Description}"> </label> </div>`
 	}
-	
-	_createInputItem(){
-		return htmlToElement(`<div class="row checkbox"> 
-			<label> 
-				<input type="checkbox" class="item">
-				<span class="checkbox-decorator"><span class="check"></span></span> 
-				<input class="input" placeholder="ENTER BUCKET LIST ITEM"> 
-			</label> 
-		</div>`);
-	}
 
 	_createEmpty(){
 		return htmlToElement(`<div class="emptyPage justify-content-center">
@@ -172,26 +112,6 @@ revel.ListPageController = class {
         Click the '+' icon to add a new list
         <br><br>
       </div>`);
-	}
-
-	_createEmptyExpandedList(){
-		return htmlToElement(`<div class="card-body">
-        <button id="back" type="button" class="btn btn-dark">
-          <i class="material-icons justify-content-left">arrow_back</i>
-        </button>
-        <button type="button" class="close" aria-label="Close" data-toggle="modal" data-target="#confirmDeleteModal">
-          <i class="material-icons justify-content-right">delete</i>
-        </button>
-        <input class="input card-title" id="inputTitle" placeholder="ENTER TITLE">
-        <div id="itemsBox" class="checkbox col list-items">
-          <div class="row checkbox"> <label> <input type="checkbox" class="item"> <input class="input" placeholder="ENTER BUCKET LIST ITEM"> </label> </div>
-        </div>
-
-        <button id="addItem" type="button" class="btn">
-          <i class="material-icons">add</i>
-        </button>
-      </div>
-    `)
 	}
 
 
@@ -271,7 +191,7 @@ revel.FbBucketListManager = class {
 			let _itemsRef = docRef.collection(revel.FB_COLLECTION_ITEMS);
 			items.forEach(item => {
 				_itemsRef.add({
-				[revel.FB_KEY_DESCRIPTION] : item,
+				[revel.FB_KEY_DESCRIPTION] : item.Description,
 				[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
 				[revel.FB_KEY_PICTURE] : null,
 				[revel.FB_KEY_JOURNAL] : null,

@@ -11,6 +11,7 @@ body {
     color: white;
     /* justify-content: center; */
     height: 60px;
+    z-index: 100;
 }
 
 .page-container {
