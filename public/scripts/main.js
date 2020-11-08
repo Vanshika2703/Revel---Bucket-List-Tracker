@@ -39,7 +39,7 @@ revel.ListPageController = class {
 			const title = document.querySelector("#inputTitle").value;
 			const items = [];
 			document.querySelectorAll("#itemsBox div.row.checkbox .input").forEach(item => {
-				items.push(item.value);				
+				items.push({Description: item.value, id: item.id});				
 			});
 			console.log('items :>> ', items);
 			if(blId==0){
@@ -114,9 +114,7 @@ revel.ListPageController = class {
 						revel.page = revel.pages.EXPANDED_LIST;
 						document.querySelector("#expandedList .card-title").value = bl.title;
 
-						let itemsBoxHtml = "";
-						bl.items.forEach(x=>itemsBoxHtml = itemsBoxHtml
-							.concat(`<div class="row checkbox"> <label> <input type="checkbox" class="item" onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> <input class="input" value="${x.Description}"> </label> </div>`));
+						let itemsBoxHtml = this._createItems(bl.items);
 						document.querySelector("#itemsBox").innerHTML = itemsBoxHtml;
 
 						revel.showMainPageContents();
@@ -147,14 +145,20 @@ revel.ListPageController = class {
 	_createItems(items){
 		let itemHtml = "";
 		items.forEach(item => {
-			itemHtml += `<div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>${item[revel.FB_KEY_DESCRIPTION]}</h5> </label> </div>`
+			itemHtml += this._createItem(item);
 		});
 		return itemHtml;
+	}
+
+	_createItem(item){
+		return `<div class="row checkbox"> <label> <input type="checkbox" class="item" onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> <input id="${item.id}" class="input" value="${item.Description}"> </label> </div>`
 	}
 	
 	_createInputItem(){
 		return htmlToElement(`<div class="row checkbox"> 
-			<label> <input type="checkbox" class="item"> 
+			<label> 
+				<input type="checkbox" class="item">
+				<span class="checkbox-decorator"><span class="check"></span></span> 
 				<input class="input" placeholder="ENTER BUCKET LIST ITEM"> 
 			</label> 
 		</div>`);
@@ -321,27 +325,50 @@ revel.FbBucketListManager = class {
 	}
 
 	update(id,title,items) {
-		console.log(`${title}, ${items}`);	
+		console.log(`hihihihi ${title}, ${items}`);	
 		this._ref.doc(id).update({
 			[revel.FB_KEY_TITLE]: title,
-			[revel.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+			[revel.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now()
 		})
-		.then(function(docRef) {
-			let _itemsRef = docRef.collection(revel.FB_COLLECTION_ITEMS);
-			items.forEach(item => {
-				_itemsRef.update({
-				[revel.FB_KEY_DESCRIPTION] : item,
-				[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-				[revel.FB_KEY_PICTURE] : null,
-				[revel.FB_KEY_JOURNAL] : null,
-				[revel.FB_KEY_ISCHECKED] : false}
-				)
-			});
+		.then(function() {
 			console.log("Document successfully updated!");
 		})
 		.catch(function (error) {
 			// The document probably doesn't exist.
 			console.error("Error updating document: ", error);
+		});
+
+		items.forEach(item => {
+			if(item.id)
+				this._ref.doc(id).collection(revel.FB_COLLECTION_ITEMS).doc(item.id)
+				.update({
+					[revel.FB_KEY_DESCRIPTION] : item.Description,
+					[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+					[revel.FB_KEY_PICTURE] : null,
+					[revel.FB_KEY_JOURNAL] : null,
+					[revel.FB_KEY_ISCHECKED] : false})
+				.then(function() {
+					console.log("Item successfully updated!");
+				})
+				.catch(function (error) {
+					// The document probably doesn't exist.
+					console.error("Error updating item: ", error);
+				});
+			else
+				this._ref.doc(id).collection(revel.FB_COLLECTION_ITEMS)
+				.add({
+					[revel.FB_KEY_DESCRIPTION] : item.Description,
+					[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+					[revel.FB_KEY_PICTURE] : null,
+					[revel.FB_KEY_JOURNAL] : null,
+					[revel.FB_KEY_ISCHECKED] : false})
+				.then(function() {
+					console.log("Item successfully updated!");
+				})
+				.catch(function (error) {
+					// The document probably doesn't exist.
+					console.error("Error updating item: ", error);
+				});
 		});
 
 	}
