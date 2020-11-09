@@ -240,7 +240,7 @@ body {
         font-size: 5em;
     }
 }
-@media (max-width: 375px) {
+@media (max-width: 380px) {
     .card{
         height: 12.5rem;
         width: 9rem;
