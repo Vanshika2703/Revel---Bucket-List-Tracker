@@ -117,10 +117,15 @@ function doalert(checkboxElem) {
         if(document.querySelector("#expandedList").contains(checkboxElem)){
             console.log("In expanded List");
             $("#addContentModal").modal()
+            document.querySelector("#uncheck").onclick = (event)=>{
+                checkboxElem.checked = false;
+            }
+            document.querySelector("#saveInfo").onclick = (event)=>{
+                checkboxElem.disabled = true;
+            }
         }else{
-            //checkboxElem.checked = "false";
-        }
-    checkboxElem.addAttribute("disabled: disabled")    
+            checkboxElem.disabled = true;
+        }  
     }
 }
 
