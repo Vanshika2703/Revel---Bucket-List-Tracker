@@ -56,8 +56,7 @@ revel.ListPageController = class {
 			for(let i = 0; i<revel.fbBucketListManager.length;i++){
 				const bl = await revel.fbBucketListManager.getListAtIndex(i);
 				const newCard = this._createCard(bl.title, bl.items);
-				newCard.onclick = async (event) => {
-					const bl = await revel.fbBucketListManager.getListAtIndex(i);
+				newCard.onclick = (event) => {
 					if(revel.page == revel.pages.MAIN && !event.switchingToMain && 
 						!Array.from(document.querySelectorAll(".card-body>div")).some(x=>x.contains(event.target))){
 						event.switchingToExpanded = true;
@@ -139,7 +138,7 @@ revel.initializePage = function() {
 	if(document.querySelector("#listPage")){
 		console.log("You are on list page");
 		revel.fbBucketListManager = new revel.FbBucketListManager();
-		new revel.ListPageController();
+		revel.fbListPageController = new revel.ListPageController();
 	}
 };
 
