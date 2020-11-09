@@ -104,13 +104,23 @@ revel.resetExpandedList = function() {
 	}
 }
 
-
+function openAttachment() {
+    document.getElementById('attachment').click();
+  }
+  
+  function fileSelected(input){
+    document.getElementById('btnAttachment').value = "File: " + input.files[0].name
+  }
 
 function doalert(checkboxElem) {
     if (checkboxElem.checked) {
-        alert ("hi");
-    } else {
-        alert ("bye");
+        if(document.querySelector("#expandedList").contains(checkboxElem)){
+            console.log("In expanded List");
+            $("#addContentModal").modal()
+        }else{
+            //checkboxElem.checked = "false";
+        }
+    checkboxElem.addAttribute("disabled: disabled")    
     }
 }
 
