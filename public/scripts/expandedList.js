@@ -4,6 +4,7 @@ document.querySelector("#listPage").onclick = (event) => {
     if(revel.page == revel.pages.EXPANDED_LIST && !event.switchingToExpanded && !document.querySelector("#expandedList").contains(event.target)){
         event.switchingToMain = true;
         revel.page = revel.pages.MAIN;
+        revel.fbListPageController.updateList();
         revel.showMainPageContents();
     }
 };

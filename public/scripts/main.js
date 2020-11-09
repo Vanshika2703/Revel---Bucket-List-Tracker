@@ -138,7 +138,7 @@ revel.initializePage = function() {
 	if(document.querySelector("#listPage")){
 		console.log("You are on list page");
 		revel.fbBucketListManager = new revel.FbBucketListManager();
-		new revel.ListPageController();
+		revel.fbListPageController = new revel.ListPageController();
 	}
 };
 
