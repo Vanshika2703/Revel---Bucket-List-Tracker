@@ -125,6 +125,25 @@ body {
     box-shadow: 7px 7px 7px rgba(33,33,33,.7);
 }
 
+#timelinePage .card{
+    width: auto;
+    background-color: #96C7CA;
+    margin:20px;
+    display: block;
+    justify-content: center;
+    align-self: center;
+    text-align:center;
+    padding:25px;
+    font-size:1.5em;
+    font-family: 'Permanent Marker', cursive;
+    /* Firefox */
+    -moz-box-shadow:7px 7px 7px rgba(33,33,33,1);
+    /* Safari+Chrome */
+    -webkit-box-shadow: 7px 7px 7px rgba(33,33,33,.7);
+    /* Opera */
+    box-shadow: 7px 7px 7px rgba(33,33,33,.7);
+}
+
 .card .checkbox {
     font-family: 'Handlee', cursive;
 }
