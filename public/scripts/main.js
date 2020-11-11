@@ -7,6 +7,7 @@ revel.FB_KEY_TITLE = "Title";
 revel.FB_KEY_COLOR = "color";
 revel.FB_KEY_LAST_TOUCHED = "lastTouched";
 revel.FB_COLLECTION_ITEMS = "Items";
+revel.FB_KEY_ITEMS = "items";
 revel.FB_KEY_DESCRIPTION = "Description";
 revel.FB_KEY_PICTURE = "Picture";
 revel.FB_KEY_ISCHECKED = "isChecked";
@@ -94,7 +95,14 @@ revel.ListPageController = class {
 	}
 	_createItems(items){
 		let itemHtml = "";
-		items.forEach(item => {
+		Object.keys(items).reduce((prev, next) => [...prev, {
+			"id" : next,
+			[revel.FB_KEY_DESCRIPTION] : items[next].Description,
+			[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+			[revel.FB_KEY_PICTURE] : null,
+			[revel.FB_KEY_JOURNAL] : null,
+			[revel.FB_KEY_ISCHECKED] : false
+		}],[]).forEach(item => {
 			itemHtml += this._createItem(item);
 		});
 		return itemHtml;
@@ -184,20 +192,21 @@ revel.FbBucketListManager = class {
 
 		let addItems = {
 			[revel.FB_KEY_TITLE] : title,
-			[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now()
+			[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+			[revel.FB_KEY_ITEMS] : items.reduce((prev, next) => {
+				return { 
+					...prev, [next.id ? next.id : Math.random().toString(36).substr(2, 9)]: {
+						[revel.FB_KEY_DESCRIPTION] : next.Description,
+						[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+						[revel.FB_KEY_PICTURE] : null,
+						[revel.FB_KEY_JOURNAL] : null,
+						[revel.FB_KEY_ISCHECKED] : false
+					}
+				}
+			},{})
 		}
 		this._ref.add(addItems)
 		.then(function(docRef) {
-			let _itemsRef = docRef.collection(revel.FB_COLLECTION_ITEMS);
-			items.forEach(item => {
-				_itemsRef.add({
-				[revel.FB_KEY_DESCRIPTION] : item.Description,
-				[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-				[revel.FB_KEY_PICTURE] : null,
-				[revel.FB_KEY_JOURNAL] : null,
-				[revel.FB_KEY_ISCHECKED] : false}
-				)
-			});
 			console.log("Document written with ID: ", docRef.id);
 		})
 		.catch(function(error) {
@@ -225,18 +234,10 @@ revel.FbBucketListManager = class {
 		const docSnapshot = this._documentSnapshots[index];
 		console.log('myDoc title :>> ', docSnapshot.get(revel.FB_KEY_TITLE));
 		const items = [];
-		await this._ref.doc(docSnapshot.id)
-			.collection(revel.FB_COLLECTION_ITEMS).get()
-			.then(response =>{
-				response.forEach(x=> items.push({
-					id: x.id,
-					...x.data()
-				}));
-			});
 		
 		console.log('items :>> ', items);
 		const bl = {id:docSnapshot.id ,title: docSnapshot.get(revel.FB_KEY_TITLE),
-			items: items};
+			items: docSnapshot.get(revel.FB_KEY_ITEMS)};
 		return bl;
 	}
 
@@ -248,7 +249,18 @@ revel.FbBucketListManager = class {
 		console.log(`hihihihi ${title}, ${items}`);	
 		this._ref.doc(id).update({
 			[revel.FB_KEY_TITLE]: title,
-			[revel.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now()
+			[revel.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
+			[revel.FB_KEY_ITEMS] : items.reduce((prev, next) => {
+				return { 
+					...prev, [next.id ? next.id : Math.random().toString(36).substr(2, 9)]: {
+						[revel.FB_KEY_DESCRIPTION] : next.Description,
+						[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+						[revel.FB_KEY_PICTURE] : null,
+						[revel.FB_KEY_JOURNAL] : null,
+						[revel.FB_KEY_ISCHECKED] : false
+					}
+				}
+			},{}) 
 		})
 		.then(function() {
 			console.log("Document successfully updated!");
@@ -257,42 +269,8 @@ revel.FbBucketListManager = class {
 			// The document probably doesn't exist.
 			console.error("Error updating document: ", error);
 		});
-
-		items.forEach(item => {
-			if(item.id)
-				this._ref.doc(id).collection(revel.FB_COLLECTION_ITEMS).doc(item.id)
-				.update({
-					[revel.FB_KEY_DESCRIPTION] : item.Description,
-					[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-					[revel.FB_KEY_PICTURE] : null,
-					[revel.FB_KEY_JOURNAL] : null,
-					[revel.FB_KEY_ISCHECKED] : false})
-				.then(function() {
-					console.log("Item successfully updated!");
-				})
-				.catch(function (error) {
-					// The document probably doesn't exist.
-					console.error("Error updating item: ", error);
-				});
-			else
-				this._ref.doc(id).collection(revel.FB_COLLECTION_ITEMS)
-				.add({
-					[revel.FB_KEY_DESCRIPTION] : item.Description,
-					[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-					[revel.FB_KEY_PICTURE] : null,
-					[revel.FB_KEY_JOURNAL] : null,
-					[revel.FB_KEY_ISCHECKED] : false})
-				.then(function() {
-					console.log("Item successfully updated!");
-				})
-				.catch(function (error) {
-					// The document probably doesn't exist.
-					console.error("Error updating item: ", error);
-				});
-		});
-
 	}
-   }
+}
 
 revel.storage.BL_ID_KEY = "BL_ID_KEY";
 revel.storage.getbucketListId = function() {
