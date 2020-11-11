@@ -2,7 +2,7 @@ html{
     height:100%;
 }
 body {
-  background: #DDDDDD;
+  background: #FFFFFF;
   height: 100%;
 }
 
@@ -113,7 +113,7 @@ body {
 .card{
     height: 25rem;
     width: 18rem;
-    background-color: #96C7CA;
+    background-color: #D6FAF3;
     margin:20px;
     display: inline-flex;
     font-family: 'Permanent Marker', cursive;
@@ -127,8 +127,10 @@ body {
 
 #timelinePage .card{
     width: auto;
-    background-color: #96C7CA;
-    margin:20px;
+    background-color: #D6FAF3;
+    margin:25px;
+    margin-top:20px;
+    /* border-top:20px; */
     display: block;
     justify-content: center;
     align-self: center;
@@ -136,12 +138,8 @@ body {
     padding:25px;
     font-size:1.5em;
     font-family: 'Permanent Marker', cursive;
-    /* Firefox */
-    -moz-box-shadow:7px 7px 7px rgba(33,33,33,1);
-    /* Safari+Chrome */
-    -webkit-box-shadow: 7px 7px 7px rgba(33,33,33,.7);
-    /* Opera */
-    box-shadow: 7px 7px 7px rgba(33,33,33,.7);
+    box-shadow: 0 4px 8px 0 rgba(33, 33, 33, .7), 
+    0 6px 20px 0 rgba(33, 33, 33, .7);
 }
 
 .card .checkbox {
@@ -268,7 +266,7 @@ body {
 }
 
 .checkbox label input[type=checkbox]:checked+.checkbox-decorator .check:before, label.checkbox-inline input[type=checkbox]:checked+.checkbox-decorator .check:before {
-    color: bisque;
+    color: black;
     box-shadow: 0 0 0 10px, 10px -10px 0 10px, 32px 0 0 20px, 32px 0 20px, -5px 5px 0 10px, 20px -12px 0 11px;
     animation: b .3s forwards;
 }
