@@ -14,6 +14,7 @@ revel.FB_KEY_ISCHECKED = "isChecked";
 revel.FB_KEY_JOURNAL = "journalEntry";
 revel.FB_KEY_USERS = "users";
 revel.fbBucketListManager = null;
+revel.inputBuffer = {};
 revel.pages = {
 	"FRIENDS" : "friends",
 	"EXPANDED_LIST" : "expandedList",
@@ -198,9 +199,9 @@ revel.FbBucketListManager = class {
 					...prev, [next.id ? next.id : Math.random().toString(36).substr(2, 9)]: {
 						[revel.FB_KEY_DESCRIPTION] : next.Description,
 						[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-						[revel.FB_KEY_PICTURE] : null,
-						[revel.FB_KEY_JOURNAL] : null,
-						[revel.FB_KEY_ISCHECKED] : false
+						[revel.FB_KEY_PICTURE] : revel.inputBuffer[next.id]? revel.inputBuffer[next.id][revel.FB_KEY_PICTURE] : null,
+						[revel.FB_KEY_JOURNAL] : revel.inputBuffer[next.id]? revel.inputBuffer[next.id][revel.FB_KEY_JOURNAL] : null,
+						[revel.FB_KEY_ISCHECKED] : revel.inputBuffer[next.id]? revel.inputBuffer[next.id][revel.FB_KEY_ISCHECKED] : false
 					}
 				}
 			},{})
@@ -255,12 +256,12 @@ revel.FbBucketListManager = class {
 					...prev, [next.id ? next.id : Math.random().toString(36).substr(2, 9)]: {
 						[revel.FB_KEY_DESCRIPTION] : next.Description,
 						[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-						[revel.FB_KEY_PICTURE] : null,
-						[revel.FB_KEY_JOURNAL] : null,
-						[revel.FB_KEY_ISCHECKED] : false
+						...revel.inputBuffer[next.id]? {[revel.FB_KEY_PICTURE] : revel.inputBuffer[next.id][revel.FB_KEY_PICTURE]} : null,
+						...revel.inputBuffer[next.id]? {[revel.FB_KEY_JOURNAL] : revel.inputBuffer[next.id][revel.FB_KEY_JOURNAL]} : null,
+						...revel.inputBuffer[next.id]? {[revel.FB_KEY_ISCHECKED] : revel.inputBuffer[next.id][revel.FB_KEY_ISCHECKED]} : false
 					}
 				}
-			},{}) 
+			},{})
 		})
 		.then(function() {
 			console.log("Document successfully updated!");
@@ -269,6 +270,10 @@ revel.FbBucketListManager = class {
 			// The document probably doesn't exist.
 			console.error("Error updating document: ", error);
 		});
+	}
+
+	addItems(items) {
+		return 
 	}
 }
 

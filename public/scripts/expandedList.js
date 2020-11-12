@@ -123,11 +123,21 @@ function doalert(checkboxElem) {
             }
             document.querySelector("#saveInfo").onclick = (event)=>{
                 checkboxElem.disabled = true;
+                if(!revel.inputBuffer[getIDFromCheckbox(checkboxElem).id]) revel.inputBuffer[getIDFromCheckbox(checkboxElem).id] = {};
+                revel.inputBuffer[getIDFromCheckbox(checkboxElem).id][revel.FB_KEY_ISCHECKED] = true;
+                revel.inputBuffer[getIDFromCheckbox(checkboxElem).id][revel.FB_KEY_JOURNAL] = document.querySelector("#journalInput").value;
+                revel.inputBuffer[getIDFromCheckbox(checkboxElem).id][revel.FB_KEY_PICTURE] = true? "":document.querySelector("#attachment").value;
+
+                console.log("inputBuffer: ", revel.inputBuffer);
             }
         }else{
             checkboxElem.disabled = true;
         }  
     }
+}
+
+function getIDFromCheckbox(checkboxElem){
+    return checkboxElem.nextElementSibling.nextElementSibling;
 }
 
 revel.showMainPageContents();
