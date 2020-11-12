@@ -70,12 +70,12 @@ revel.ListPageController = class {
 
 						let itemsBoxHtml = this._createItems(Object.keys(bl.items)
 							.filter(x=>!bl.items[x][revel.FB_KEY_ISCHECKED])
-							.reduce((prev, next)=> {return{...prev, [next]: bl.items[next]}},{}), true, false);
+							.reduce((prev, next)=> {return{...prev, [next]: bl.items[next]}},{}), true);
 						document.querySelector("#itemsBox").innerHTML = itemsBoxHtml;
 
 						let checkedItemsBoxHtml = this._createItems(Object.keys(bl.items)
 						.filter(x=>bl.items[x][revel.FB_KEY_ISCHECKED])
-						.reduce((prev, next)=> {return{...prev, [next]: bl.items[next]}},{}), true, true);
+						.reduce((prev, next)=> {return{...prev, [next]: bl.items[next]}},{}), true);
 						document.querySelector("#checkedItemsBox").innerHTML = checkedItemsBoxHtml;
 					}
 				}
@@ -99,37 +99,47 @@ revel.ListPageController = class {
           <div class="checkbox col">
 		  	${this._createItems(Object.keys(items)
 				.filter(x=>!items[x][revel.FB_KEY_ISCHECKED])
-				.reduce((prev, next)=> {return{...prev, [next]: items[next]}},{}), false, false)}
+				.reduce((prev, next)=> {return{...prev, [next]: items[next]}},{}), false)}
 		  </div>
 		  <hr>
           <div class="checkbox col">
 		  	${this._createItems(Object.keys(items)
 				.filter(x=>items[x][revel.FB_KEY_ISCHECKED])
-				.reduce((prev, next)=> {return{...prev, [next]: items[next]}},{}), false, true)}
+				.reduce((prev, next)=> {return{...prev, [next]: items[next]}},{}), false)}
           </div>
       </div>`);
 	}
-	_createItems(items, isInput, isChecked){
+	_createItems(items, isInput){
 		let itemHtml = "";
 		Object.keys(items).reduce((prev, next) => [...prev, {
 			"id" : next,
 			[revel.FB_KEY_DESCRIPTION] : items[next].Description,
 			[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-			[revel.FB_KEY_PICTURE] : null,
-			[revel.FB_KEY_JOURNAL] : null,
-			[revel.FB_KEY_ISCHECKED] : false
+			[revel.FB_KEY_PICTURE] : items[next][revel.FB_KEY_PICTURE],
+			[revel.FB_KEY_JOURNAL] : items[next][revel.FB_KEY_JOURNAL],
+			[revel.FB_KEY_ISCHECKED] : items[next][revel.FB_KEY_ISCHECKED]
 		}],[]).forEach(item => {
-			itemHtml += isInput? this._createInputItem(item, isChecked) : this._createItem(item, isChecked);
+			itemHtml += isInput? this._createInputItem(item) : this._createItem(item);
 		});
 		return itemHtml;
 	}
 
-	_createInputItem(item, isChecked){
-		return `<div class="row checkbox"> <label> <input type="checkbox" class="item" ${isChecked? "checked" : ""} onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> <input id="${item.id}" class="input" value="${item.Description}"> </label> </div>`
+	_createInputItem(item){
+		return `<div class="row checkbox"> 
+					<label> 
+						<input type="checkbox" class="item" ${item[revel.FB_KEY_ISCHECKED]? "checked" : ""} onchange="doalert(this)"> 
+						<span class="checkbox-decorator">
+							<span class="check"></span>
+						</span> 
+						<input id="${item.id}" class="input" value="${item[revel.FB_KEY_DESCRIPTION]}"> 
+					</label> 
+					${(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_PICTURE])? `<img src="${item[revel.FB_KEY_PICTURE]}" alt="${item[revel.FB_KEY_DESCRIPTION]}">`:""}
+					${(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_JOURNAL])? `<p>${item[revel.FB_KEY_JOURNAL]}</p>`:""}
+				</div>`
 	}
 
-	_createItem(item, isChecked){
-		return `<div class="row checkbox"> <label> <input type="checkbox" class="item" ${isChecked? "checked" : ""} onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> ${item.Description} </label> </div>`
+	_createItem(item){
+		return `<div class="row checkbox"> <label> <input type="checkbox" class="item" ${item[revel.FB_KEY_ISCHECKED]? "checked" : ""} onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> ${item.Description} </label> </div>`
 	}
 
 	_createEmpty(){
