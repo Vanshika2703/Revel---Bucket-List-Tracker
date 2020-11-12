@@ -127,7 +127,7 @@ revel.ListPageController = class {
 	_createInputItem(item){
 		return `<div class="row checkbox"> 
 					<label> 
-						<input type="checkbox" class="item" ${item[revel.FB_KEY_ISCHECKED]? "checked" : ""} onchange="doalert(this)"> 
+						<input type="checkbox" ${item[revel.FB_KEY_ISCHECKED]? "disabled='disabled'" : ""} class="item" ${item[revel.FB_KEY_ISCHECKED]? "checked" : ""} onchange="doalert(this)"> 
 						<span class="checkbox-decorator">
 							<span class="check"></span>
 						</span> 
@@ -139,7 +139,7 @@ revel.ListPageController = class {
 	}
 
 	_createItem(item){
-		return `<div class="row checkbox"> <label> <input type="checkbox" class="item" ${item[revel.FB_KEY_ISCHECKED]? "checked" : ""} onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> ${item.Description} </label> </div>`
+		return `<div class="row checkbox"> <label> <input type="checkbox" disabled="disabled" class="item" ${item[revel.FB_KEY_ISCHECKED]? "checked" : ""} onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> ${item.Description} </label> </div>`
 	}
 
 	_createEmpty(){
