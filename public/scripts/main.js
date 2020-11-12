@@ -68,8 +68,15 @@ revel.ListPageController = class {
 
 						document.querySelector("#expandedList .card-title").value = bl.title;
 
-						let itemsBoxHtml = this._createItems(bl.items);
+						let itemsBoxHtml = this._createItems(Object.keys(bl.items)
+							.filter(x=>!bl.items[x][revel.FB_KEY_ISCHECKED])
+							.reduce((prev, next)=> {return{...prev, [next]: bl.items[next]}},{}), true, false);
 						document.querySelector("#itemsBox").innerHTML = itemsBoxHtml;
+
+						let checkedItemsBoxHtml = this._createItems(Object.keys(bl.items)
+						.filter(x=>bl.items[x][revel.FB_KEY_ISCHECKED])
+						.reduce((prev, next)=> {return{...prev, [next]: bl.items[next]}},{}), true, true);
+						document.querySelector("#checkedItemsBox").innerHTML = checkedItemsBoxHtml;
 					}
 				}
 				newList.appendChild(newCard);
@@ -90,11 +97,19 @@ revel.ListPageController = class {
         <div class="card-body">
           <h5 class="card-title">${title}</h5>
           <div class="checkbox col">
-		  	${this._createItems(items)}
+		  	${this._createItems(Object.keys(items)
+				.filter(x=>!items[x][revel.FB_KEY_ISCHECKED])
+				.reduce((prev, next)=> {return{...prev, [next]: items[next]}},{}), false, false)}
+		  </div>
+		  <hr>
+          <div class="checkbox col">
+		  	${this._createItems(Object.keys(items)
+				.filter(x=>items[x][revel.FB_KEY_ISCHECKED])
+				.reduce((prev, next)=> {return{...prev, [next]: items[next]}},{}), false, true)}
           </div>
       </div>`);
 	}
-	_createItems(items){
+	_createItems(items, isInput, isChecked){
 		let itemHtml = "";
 		Object.keys(items).reduce((prev, next) => [...prev, {
 			"id" : next,
@@ -104,13 +119,17 @@ revel.ListPageController = class {
 			[revel.FB_KEY_JOURNAL] : null,
 			[revel.FB_KEY_ISCHECKED] : false
 		}],[]).forEach(item => {
-			itemHtml += this._createItem(item);
+			itemHtml += isInput? this._createInputItem(item, isChecked) : this._createItem(item, isChecked);
 		});
 		return itemHtml;
 	}
 
-	_createItem(item){
-		return `<div class="row checkbox"> <label> <input type="checkbox" class="item" onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> <input id="${item.id}" class="input" value="${item.Description}"> </label> </div>`
+	_createInputItem(item, isChecked){
+		return `<div class="row checkbox"> <label> <input type="checkbox" class="item" ${isChecked? "checked" : ""} onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> <input id="${item.id}" class="input" value="${item.Description}"> </label> </div>`
+	}
+
+	_createItem(item, isChecked){
+		return `<div class="row checkbox"> <label> <input type="checkbox" class="item" ${isChecked? "checked" : ""} onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> ${item.Description} </label> </div>`
 	}
 
 	_createEmpty(){
@@ -213,6 +232,7 @@ revel.FbBucketListManager = class {
 		.catch(function(error) {
 			console.error("Error adding document: ", error);
 		});
+		revel.inputBuffer= {};
 	}
 	beginListening(changeListener) {    
 		this._unsubscribe = this._ref
@@ -250,18 +270,7 @@ revel.FbBucketListManager = class {
 		console.log(`hihihihi ${title}, ${items}`);	
 		this._ref.doc(id).update({
 			[revel.FB_KEY_TITLE]: title,
-			[revel.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now(),
-			[revel.FB_KEY_ITEMS] : items.reduce((prev, next) => {
-				return { 
-					...prev, [next.id ? next.id : Math.random().toString(36).substr(2, 9)]: {
-						[revel.FB_KEY_DESCRIPTION] : next.Description,
-						[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-						...revel.inputBuffer[next.id]? {[revel.FB_KEY_PICTURE] : revel.inputBuffer[next.id][revel.FB_KEY_PICTURE]} : null,
-						...revel.inputBuffer[next.id]? {[revel.FB_KEY_JOURNAL] : revel.inputBuffer[next.id][revel.FB_KEY_JOURNAL]} : null,
-						...revel.inputBuffer[next.id]? {[revel.FB_KEY_ISCHECKED] : revel.inputBuffer[next.id][revel.FB_KEY_ISCHECKED]} : false
-					}
-				}
-			},{})
+			[revel.FB_KEY_LAST_TOUCHED]: firebase.firestore.Timestamp.now()
 		})
 		.then(function() {
 			console.log("Document successfully updated!");
@@ -270,10 +279,26 @@ revel.FbBucketListManager = class {
 			// The document probably doesn't exist.
 			console.error("Error updating document: ", error);
 		});
-	}
 
-	addItems(items) {
-		return 
+		this._ref.doc(id).update(items.reduce((prev, next) => {
+			let path = revel.FB_KEY_ITEMS+"."+ (next.id ? next.id : Math.random().toString(36).substr(2, 9));
+			return { 
+				...prev,
+				[path+"."+revel.FB_KEY_DESCRIPTION] : next.Description,
+				[path+"."+revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+				...revel.inputBuffer[next.id]? {[path+"."+revel.FB_KEY_PICTURE] : revel.inputBuffer[next.id][revel.FB_KEY_PICTURE]} : null,
+				...revel.inputBuffer[next.id]? {[path+"."+revel.FB_KEY_JOURNAL] : revel.inputBuffer[next.id][revel.FB_KEY_JOURNAL]} : null,
+				...revel.inputBuffer[next.id]? {[path+"."+revel.FB_KEY_ISCHECKED] : revel.inputBuffer[next.id][revel.FB_KEY_ISCHECKED]} : false
+			};
+		},{}))
+		.then(function() {
+			console.log("Items successfully updated!");
+		})
+		.catch(function (error) {
+			// The document probably doesn't exist.
+			console.error("Error updating items: ", error);
+		});
+		revel.inputBuffer= {};
 	}
 }
 

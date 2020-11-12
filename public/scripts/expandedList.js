@@ -48,6 +48,9 @@ revel.resetExpandedList = function() {
         document.querySelectorAll("#itemsBox div.row.checkbox .input").forEach(item => {
             items.push({Description: item.value, id: item.id});				
         });
+        document.querySelectorAll("#checkedItemsBox div.row.checkbox .input").forEach(item => {
+            items.push({Description: item.value, id: item.id});				
+        });
         console.log('items :>> ', items);
         if(blId==0){
             console.log('blId :>> ', blId);
@@ -85,6 +88,9 @@ revel.resetExpandedList = function() {
             </button>
             <input class="input card-title" id="inputTitle" placeholder="ENTER TITLE">
             <div id="itemsBox" class="checkbox col list-items">
+            </div>
+            <hr>
+            <div id="checkedItemsBox" class="checkbox col list-items">
             </div>
         
             <button id="addItem" type="button" class="btn">
