@@ -16,6 +16,7 @@ revel.showMainPageContents = function() {
             document.querySelector("#expandedList").classList.add("hidden");
             break;
         case revel.pages.EXPANDED_LIST:
+            revel.imageBuffer = [""];
             revel.resetExpandedList();
             document.querySelector("#listContainer").classList.add("hidden");
             document.querySelector("#expandedList").classList.remove("hidden");
@@ -116,9 +117,10 @@ function openAttachment() {
     document.getElementById('attachment').click();
   }
   
-  function fileSelected(input){
-    document.getElementById('btnAttachment').value = "File: " + input.files[0].name
-  }
+function fileSelected(input){
+    // alert(input.files[0]);
+    revel.imageBuffer = input.files[0]
+}
 
 function doalert(checkboxElem) {
     if (checkboxElem.checked) {
@@ -133,7 +135,12 @@ function doalert(checkboxElem) {
                 if(!revel.inputBuffer[getIDFromCheckbox(checkboxElem).id]) revel.inputBuffer[getIDFromCheckbox(checkboxElem).id] = {};
                 revel.inputBuffer[getIDFromCheckbox(checkboxElem).id][revel.FB_KEY_ISCHECKED] = true;
                 revel.inputBuffer[getIDFromCheckbox(checkboxElem).id][revel.FB_KEY_JOURNAL] = document.querySelector("#journalInput").value;
-                revel.inputBuffer[getIDFromCheckbox(checkboxElem).id][revel.FB_KEY_PICTURE] = true? "":document.querySelector("#attachment").value;
+                revel.inputBuffer[getIDFromCheckbox(checkboxElem).id][revel.FB_KEY_PICTURE] = {
+                    name: Math.random().toString(36).substr(2, 9) + "." + revel.imageBuffer.name,
+                    file: revel.imageBuffer};
+                // $.get(document.querySelector("#attachment").value, function(data) {
+                //     alert(data);
+                // });
 
                 console.log("inputBuffer: ", revel.inputBuffer);
             }
