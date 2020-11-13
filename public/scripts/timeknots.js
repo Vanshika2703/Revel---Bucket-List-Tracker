@@ -1,3 +1,22 @@
+
+   //playing around with prototyping. This way of doing it is highly discouraged and is a part of experimentation
+
+   if( typeof Element.prototype.clearChildren === 'undefined' ) {
+      Object.defineProperty(Element.prototype, 'clearChildren', {
+        configurable: true,
+        enumerable: false,
+        value: function() {
+          while(this.firstChild) this.removeChild(this.lastChild);
+        }
+      });
+  }
+
+function htmlToElement(html) {
+  var template = document.createElement('template');
+  template.innerHTML = html;
+  return template.content.firstChild;
+}
+
 var TimeKnots = {
   draw: function(id, events, options){
     var cfg = {
@@ -15,7 +34,6 @@ var TimeKnots = {
       seriesColor: d3.scale.category20(),
       dateDimension: true
     };
-
 
     //default configuration overrid
     if(options != undefined){
@@ -169,9 +187,6 @@ var TimeKnots = {
       .style("fill", function(d){if(d.color != undefined){return d.color} return cfg.color}).transition()
       .duration(100).attr("r",  function(d){if(d.radius != undefined){return Math.floor(d.radius*1.5)} return Math.floor(cfg.radius*1.5)});
       tip.html("");
-      if(d.img != undefined){
-        tip.append("img").style("float", "left").style("margin-right", "4px").attr("src", d.img).attr("width", "64px");
-      }
       tip.append("div").style("float", "left").html(dateValue );
       tip.transition()
       .duration(100)
@@ -180,6 +195,21 @@ var TimeKnots = {
     })
     .on("click",function(d){
       let container = document.getElementById("cardsContainer");
+      container.clearChildren();
+      container.appendChild(htmlToElement(`<div class="card">
+      <div class="card-title">
+        <h4 class="item-desc">${d.name}</h4>
+        <h6>${d.date}</h6>
+      </div>
+       <div class="card-body">
+         <div class="imgHolder">
+           <img src="${d.img}" alt="input picture">
+         </div>
+         <div class="journalInput">
+
+         </div>
+       </div>
+     </div>`))
       
     })
     .on("mouseout", function(){

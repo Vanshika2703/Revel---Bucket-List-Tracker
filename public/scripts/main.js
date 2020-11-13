@@ -170,7 +170,7 @@ revel.TimelineController = class {
 					img: n[revel.FB_KEY_PICTURE]
 				}]:p,[])],[]);
 
-		console.log(items);
+		//console.log(items);
 
 		TimeKnots.draw("#timelineNonDate", items, {dateFormat: "%B %Y", color: "teal", width:500, showLabels:false, labelFormat: "%Y"});
 	}
