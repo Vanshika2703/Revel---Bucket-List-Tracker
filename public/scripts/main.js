@@ -56,7 +56,7 @@ revel.ListPageController = class {
 			newList.appendChild(this._createEmpty());
 		}else{
 			for(let i = 0; i<revel.fbBucketListManager.length;i++){
-				const bl = await revel.fbBucketListManager.getListAtIndex(i);
+				const bl = revel.fbBucketListManager.getListAtIndex(i);
 				const newCard = this._createCard(bl.title, bl.items);
 				newCard.onclick = (event) => {
 					if(revel.page == revel.pages.MAIN && !event.switchingToMain && 
@@ -155,6 +155,27 @@ revel.ListPageController = class {
 
 }
 
+revel.TimelineController = class {
+	constructor() {
+
+		revel.fbBucketListManager.beginListening(this.updateTimeline.bind(this));
+	}
+
+	updateTimeline() {
+		const items = revel.fbBucketListManager.documentSnapshots
+			.reduce((prev, next) => [...prev, ...Object.values(next.get(revel.FB_KEY_ITEMS))
+				.reduce((p, n) => n[revel.FB_KEY_ISCHECKED]?[...p, {
+					name: n[revel.FB_KEY_DESCRIPTION],
+					date: n[revel.FB_KEY_LAST_TOUCHED].toDate(),
+					img: n[revel.FB_KEY_PICTURE]
+				}]:p,[])],[]);
+
+		console.log(items);
+
+		TimeKnots.draw("#timelineNonDate", items, {dateFormat: "%B %Y", color: "teal", width:500, showLabels:false, labelFormat: "%Y"});
+	}
+}
+
 revel.List = class {
 	constructor(id, title,items) {
 	  this.id = id;
@@ -177,6 +198,12 @@ revel.initializePage = function() {
 		console.log("You are on list page");
 		revel.fbBucketListManager = new revel.FbBucketListManager();
 		revel.fbListPageController = new revel.ListPageController();
+	}
+
+	if(document.querySelector("#timelinePage")){
+		console.log("You are on timeline page");
+		revel.fbBucketListManager = new revel.FbBucketListManager();
+		revel.fbTimelineController = new revel.TimelineController();
 	}
 };
 
@@ -261,7 +288,7 @@ revel.FbBucketListManager = class {
 	get length() {    
 		return this._documentSnapshots.length;
 	}
-	async getListAtIndex(index) {
+	getListAtIndex(index) {
 		const docSnapshot = this._documentSnapshots[index];
 		console.log('myDoc title :>> ', docSnapshot.get(revel.FB_KEY_TITLE));
 		const items = [];
@@ -309,6 +336,10 @@ revel.FbBucketListManager = class {
 			console.error("Error updating items: ", error);
 		});
 		revel.inputBuffer= {};
+	}
+
+	get documentSnapshots() {
+		return this._documentSnapshots;
 	}
 }
 
