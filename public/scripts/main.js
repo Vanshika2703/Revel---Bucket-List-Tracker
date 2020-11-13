@@ -7,12 +7,14 @@ revel.FB_KEY_TITLE = "Title";
 revel.FB_KEY_COLOR = "color";
 revel.FB_KEY_LAST_TOUCHED = "lastTouched";
 revel.FB_COLLECTION_ITEMS = "Items";
+revel.FB_KEY_ITEMS = "items";
 revel.FB_KEY_DESCRIPTION = "Description";
 revel.FB_KEY_PICTURE = "Picture";
 revel.FB_KEY_ISCHECKED = "isChecked";
 revel.FB_KEY_JOURNAL = "journalEntry";
 revel.FB_KEY_USERS = "users";
 revel.fbBucketListManager = null;
+revel.inputBuffer = {};
 revel.pages = {
 	"FRIENDS" : "friends",
 	"EXPANDED_LIST" : "expandedList",
@@ -66,8 +68,15 @@ revel.ListPageController = class {
 
 						document.querySelector("#expandedList .card-title").value = bl.title;
 
-						let itemsBoxHtml = this._createItems(bl.items);
+						let itemsBoxHtml = this._createItems(Object.keys(bl.items)
+							.filter(x=>!bl.items[x][revel.FB_KEY_ISCHECKED])
+							.reduce((prev, next)=> {return{...prev, [next]: bl.items[next]}},{}), true);
 						document.querySelector("#itemsBox").innerHTML = itemsBoxHtml;
+
+						let checkedItemsBoxHtml = this._createItems(Object.keys(bl.items)
+						.filter(x=>bl.items[x][revel.FB_KEY_ISCHECKED])
+						.reduce((prev, next)=> {return{...prev, [next]: bl.items[next]}},{}), true);
+						document.querySelector("#checkedItemsBox").innerHTML = checkedItemsBoxHtml;
 					}
 				}
 				newList.appendChild(newCard);
@@ -88,20 +97,49 @@ revel.ListPageController = class {
         <div class="card-body">
           <h5 class="card-title">${title}</h5>
           <div class="checkbox col">
-		  	${this._createItems(items)}
+		  	${this._createItems(Object.keys(items)
+				.filter(x=>!items[x][revel.FB_KEY_ISCHECKED])
+				.reduce((prev, next)=> {return{...prev, [next]: items[next]}},{}), false)}
+		  </div>
+		  <hr>
+          <div class="checkbox col">
+		  	${this._createItems(Object.keys(items)
+				.filter(x=>items[x][revel.FB_KEY_ISCHECKED])
+				.reduce((prev, next)=> {return{...prev, [next]: items[next]}},{}), false)}
           </div>
       </div>`);
 	}
-	_createItems(items){
+	_createItems(items, isInput){
 		let itemHtml = "";
-		items.forEach(item => {
-			itemHtml += this._createItem(item);
+		Object.keys(items).reduce((prev, next) => [...prev, {
+			"id" : next,
+			[revel.FB_KEY_DESCRIPTION] : items[next].Description,
+			[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+			[revel.FB_KEY_PICTURE] : items[next][revel.FB_KEY_PICTURE],
+			[revel.FB_KEY_JOURNAL] : items[next][revel.FB_KEY_JOURNAL],
+			[revel.FB_KEY_ISCHECKED] : items[next][revel.FB_KEY_ISCHECKED]
+		}],[]).forEach(item => {
+			itemHtml += isInput? this._createInputItem(item) : this._createItem(item);
 		});
 		return itemHtml;
 	}
 
+	_createInputItem(item){
+		return `<div class="row checkbox"> 
+					<label> 
+						<input type="checkbox" ${item[revel.FB_KEY_ISCHECKED]? "disabled='disabled'" : ""} class="item" ${item[revel.FB_KEY_ISCHECKED]? "checked" : ""} onchange="doalert(this)"> 
+						<span class="checkbox-decorator">
+							<span class="check"></span>
+						</span> 
+						<input id="${item.id}" class="input" value="${item[revel.FB_KEY_DESCRIPTION]}"> 
+					</label> 
+					${(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_PICTURE])? `<img src="${item[revel.FB_KEY_PICTURE]}" alt="${item[revel.FB_KEY_DESCRIPTION]}">`:""}
+					${(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_JOURNAL])? `<p>${item[revel.FB_KEY_JOURNAL]}</p>`:""}
+				</div>`
+	}
+
 	_createItem(item){
-		return `<div class="row checkbox"> <label> <input type="checkbox" class="item" onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> <input id="${item.id}" class="input" value="${item.Description}"> </label> </div>`
+		return `<div class="row checkbox"> <label> <input type="checkbox" disabled="disabled" class="item" ${item[revel.FB_KEY_ISCHECKED]? "checked" : ""} onchange="doalert(this)"> <span class="checkbox-decorator"><span class="check"></span></span> ${item.Description} </label> </div>`
 	}
 
 	_createEmpty(){
@@ -184,25 +222,27 @@ revel.FbBucketListManager = class {
 
 		let addItems = {
 			[revel.FB_KEY_TITLE] : title,
-			[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now()
+			[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+			[revel.FB_KEY_ITEMS] : items.reduce((prev, next) => {
+				return { 
+					...prev, [next.id ? next.id : Math.random().toString(36).substr(2, 9)]: {
+						[revel.FB_KEY_DESCRIPTION] : next.Description,
+						[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+						[revel.FB_KEY_PICTURE] : revel.inputBuffer[next.id]? revel.inputBuffer[next.id][revel.FB_KEY_PICTURE] : null,
+						[revel.FB_KEY_JOURNAL] : revel.inputBuffer[next.id]? revel.inputBuffer[next.id][revel.FB_KEY_JOURNAL] : null,
+						[revel.FB_KEY_ISCHECKED] : revel.inputBuffer[next.id]? revel.inputBuffer[next.id][revel.FB_KEY_ISCHECKED] : false
+					}
+				}
+			},{})
 		}
 		this._ref.add(addItems)
 		.then(function(docRef) {
-			let _itemsRef = docRef.collection(revel.FB_COLLECTION_ITEMS);
-			items.forEach(item => {
-				_itemsRef.add({
-				[revel.FB_KEY_DESCRIPTION] : item.Description,
-				[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-				[revel.FB_KEY_PICTURE] : null,
-				[revel.FB_KEY_JOURNAL] : null,
-				[revel.FB_KEY_ISCHECKED] : false}
-				)
-			});
 			console.log("Document written with ID: ", docRef.id);
 		})
 		.catch(function(error) {
 			console.error("Error adding document: ", error);
 		});
+		revel.inputBuffer= {};
 	}
 	beginListening(changeListener) {    
 		this._unsubscribe = this._ref
@@ -225,18 +265,10 @@ revel.FbBucketListManager = class {
 		const docSnapshot = this._documentSnapshots[index];
 		console.log('myDoc title :>> ', docSnapshot.get(revel.FB_KEY_TITLE));
 		const items = [];
-		await this._ref.doc(docSnapshot.id)
-			.collection(revel.FB_COLLECTION_ITEMS).get()
-			.then(response =>{
-				response.forEach(x=> items.push({
-					id: x.id,
-					...x.data()
-				}));
-			});
 		
 		console.log('items :>> ', items);
 		const bl = {id:docSnapshot.id ,title: docSnapshot.get(revel.FB_KEY_TITLE),
-			items: items};
+			items: docSnapshot.get(revel.FB_KEY_ITEMS)};
 		return bl;
 	}
 
@@ -258,41 +290,27 @@ revel.FbBucketListManager = class {
 			console.error("Error updating document: ", error);
 		});
 
-		items.forEach(item => {
-			if(item.id)
-				this._ref.doc(id).collection(revel.FB_COLLECTION_ITEMS).doc(item.id)
-				.update({
-					[revel.FB_KEY_DESCRIPTION] : item.Description,
-					[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-					[revel.FB_KEY_PICTURE] : null,
-					[revel.FB_KEY_JOURNAL] : null,
-					[revel.FB_KEY_ISCHECKED] : false})
-				.then(function() {
-					console.log("Item successfully updated!");
-				})
-				.catch(function (error) {
-					// The document probably doesn't exist.
-					console.error("Error updating item: ", error);
-				});
-			else
-				this._ref.doc(id).collection(revel.FB_COLLECTION_ITEMS)
-				.add({
-					[revel.FB_KEY_DESCRIPTION] : item.Description,
-					[revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
-					[revel.FB_KEY_PICTURE] : null,
-					[revel.FB_KEY_JOURNAL] : null,
-					[revel.FB_KEY_ISCHECKED] : false})
-				.then(function() {
-					console.log("Item successfully updated!");
-				})
-				.catch(function (error) {
-					// The document probably doesn't exist.
-					console.error("Error updating item: ", error);
-				});
+		this._ref.doc(id).update(items.reduce((prev, next) => {
+			let path = revel.FB_KEY_ITEMS+"."+ (next.id ? next.id : Math.random().toString(36).substr(2, 9));
+			return { 
+				...prev,
+				[path+"."+revel.FB_KEY_DESCRIPTION] : next.Description,
+				[path+"."+revel.FB_KEY_LAST_TOUCHED] : firebase.firestore.Timestamp.now(),
+				...revel.inputBuffer[next.id]? {[path+"."+revel.FB_KEY_PICTURE] : revel.inputBuffer[next.id][revel.FB_KEY_PICTURE]} : null,
+				...revel.inputBuffer[next.id]? {[path+"."+revel.FB_KEY_JOURNAL] : revel.inputBuffer[next.id][revel.FB_KEY_JOURNAL]} : null,
+				...revel.inputBuffer[next.id]? {[path+"."+revel.FB_KEY_ISCHECKED] : revel.inputBuffer[next.id][revel.FB_KEY_ISCHECKED]} : false
+			};
+		},{}))
+		.then(function() {
+			console.log("Items successfully updated!");
+		})
+		.catch(function (error) {
+			// The document probably doesn't exist.
+			console.error("Error updating items: ", error);
 		});
-
+		revel.inputBuffer= {};
 	}
-   }
+}
 
 revel.storage.BL_ID_KEY = "BL_ID_KEY";
 revel.storage.getbucketListId = function() {

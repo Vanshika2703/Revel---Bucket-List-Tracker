@@ -4,7 +4,7 @@ document.querySelector("#listPage").onclick = (event) => {
     if(revel.page == revel.pages.EXPANDED_LIST && !event.switchingToExpanded && !document.querySelector("#expandedList").contains(event.target)){
         event.switchingToMain = true;
         revel.page = revel.pages.MAIN;
-        revel.fbListPageController.updateList();
+        // revel.fbListPageController.updateList();
         revel.showMainPageContents();
     }
 };
@@ -48,6 +48,9 @@ revel.resetExpandedList = function() {
         document.querySelectorAll("#itemsBox div.row.checkbox .input").forEach(item => {
             items.push({Description: item.value, id: item.id});				
         });
+        document.querySelectorAll("#checkedItemsBox div.row.checkbox .input").forEach(item => {
+            items.push({Description: item.value, id: item.id});				
+        });
         console.log('items :>> ', items);
         if(blId==0){
             console.log('blId :>> ', blId);
@@ -86,6 +89,9 @@ revel.resetExpandedList = function() {
             <input class="input card-title" id="inputTitle" placeholder="ENTER TITLE">
             <div id="itemsBox" class="checkbox col list-items">
             </div>
+            <hr>
+            <div id="checkedItemsBox" class="checkbox col list-items">
+            </div>
         
             <button id="addItem" type="button" class="btn">
             <i class="material-icons">add</i>
@@ -123,11 +129,21 @@ function doalert(checkboxElem) {
             }
             document.querySelector("#saveInfo").onclick = (event)=>{
                 checkboxElem.disabled = true;
+                if(!revel.inputBuffer[getIDFromCheckbox(checkboxElem).id]) revel.inputBuffer[getIDFromCheckbox(checkboxElem).id] = {};
+                revel.inputBuffer[getIDFromCheckbox(checkboxElem).id][revel.FB_KEY_ISCHECKED] = true;
+                revel.inputBuffer[getIDFromCheckbox(checkboxElem).id][revel.FB_KEY_JOURNAL] = document.querySelector("#journalInput").value;
+                revel.inputBuffer[getIDFromCheckbox(checkboxElem).id][revel.FB_KEY_PICTURE] = true? "":document.querySelector("#attachment").value;
+
+                console.log("inputBuffer: ", revel.inputBuffer);
             }
         }else{
             checkboxElem.disabled = true;
         }  
     }
+}
+
+function getIDFromCheckbox(checkboxElem){
+    return checkboxElem.nextElementSibling.nextElementSibling;
 }
 
 revel.showMainPageContents();
