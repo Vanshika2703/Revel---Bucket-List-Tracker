@@ -77,7 +77,7 @@ var TimeKnots = {
       y1 : null,
       y2 : null
     }
-
+    console.log(events);
     svg.selectAll("line")
     .data(events).enter().append("line")
     .attr("class", "timeline-line")
@@ -194,6 +194,7 @@ var TimeKnots = {
 
     })
     .on("click",function(d){
+      console.log(d);
       let container = document.getElementById("cardsContainer");
       container.clearChildren();
       container.appendChild(htmlToElement(`<div class="card">
@@ -205,12 +206,17 @@ var TimeKnots = {
          <div class="imgHolder">
            <img src="${d.img}" alt="input picture">
          </div>
-         <div class="journalInput">
-
+         <div class="journalInput">${d.journal}
          </div>
        </div>
      </div>`))
       
+     d3.select(this)
+      .style("fill", function(d){if(d.color != undefined){return d.color} return cfg.color}).transition()
+      .duration(100).attr("r",  function(d){if(d.radius != undefined){return Math.floor(d.radius*1.5)} return Math.floor(cfg.radius*1.5)});
+      tip.transition()
+      .duration(100)
+      .style("opacity", .9);
     })
     .on("mouseout", function(){
         d3.select(this)

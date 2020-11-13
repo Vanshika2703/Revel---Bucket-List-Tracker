@@ -167,7 +167,8 @@ revel.TimelineController = class {
 				.reduce((p, n) => n[revel.FB_KEY_ISCHECKED]?[...p, {
 					name: n[revel.FB_KEY_DESCRIPTION],
 					date: n[revel.FB_KEY_LAST_TOUCHED].toDate(),
-					img: n[revel.FB_KEY_PICTURE]
+					img: n[revel.FB_KEY_PICTURE],
+					journal: n[revel.FB_KEY_JOURNAL]
 				}]:p,[])],[]);
 
 		//console.log(items);
@@ -210,13 +211,45 @@ revel.initializePage = function() {
 revel.FbAuthManager = class {
 	constructor() {
 		this._user=null;
+		const displayName = null;
+		const email = null;		
+		const emailVerified = null;
+		const photoURL = null;
+		const phoneNumber = null;
+		const inputEmailEl = document.querySelector("#inputEmail");
+		const inputPasswordEl = document.querySelector("#inputPassword");
+		if(revel.page = revel.pages.index){
+			document.querySelector("#createAccountButton").onclick = (event) =>{
+				console.log(`Create account for email: ${inputEmailEl.value} password: ${inputPasswordEl.value}`);
+			
+				firebase.auth().createUserWithEmailAndPassword(inputEmailEl.value, inputPasswordEl.value).catch(function(error) {
+					var errorCode = error.code;
+					var errorMessage = error.message;
+					console.log("Create account error", errorCode, errorMessage);
+				  });
+			};
+			document.querySelector("#logInButton").onclick = (event) =>{
+				console.log(`log in for email: ${inputEmailEl.value} password: ${inputPasswordEl.value}`);
+			
+				firebase.auth().signInWithEmailAndPassword(inputEmailEl.value, inputPasswordEl.value).catch(function(error) {
+					
+					var errorCode = error.code;
+					var errorMessage = error.message;
+					console.log("Existing Account log in error", errorCode, errorMessage);
+				  });
+			
+			};
+		}
+	
 	}
+	
 	beginListening(changeListener) {
 		firebase.auth().onAuthStateChanged((user)=>{
 			this._user = user;
 			changeListener();
 		})
 	}
+	
 	get isSignedIn() {
 		return !!this._user;
 	}
