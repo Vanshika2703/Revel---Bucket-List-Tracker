@@ -125,6 +125,10 @@ body {
     box-shadow: 7px 7px 7px rgba(33,33,33,.7);
 }
 
+#listContainer .card {
+    cursor: pointer;
+}
+
 #timelinePage .card{
     width: auto;
     background-color: #D6FAF3;
@@ -149,7 +153,7 @@ body {
 #expandedList{
     height: calc(90vh - 75px);
     width: 70vw;
-    background-color: #96C7CA;
+    background-color: #D6FAF3;
     margin:20px;
     padding: 5px 40px;
     display: inline-flex;
@@ -276,11 +280,6 @@ body {
     margin:0;
     padding:0;
 }
-
-/* #expandedList .is-focused{
-    background: transparent;
-    border: transparent;
-} */
 
 :focus{
     outline: aliceblue;

@@ -97,13 +97,19 @@
           <input type="file" class="file" id="attachment" style="display: none;" onchange="fileSelected(this)"/>
           <input type="button" class="file btn" id="btnAttachment" onclick="openAttachment()" value="Upload Picture"/>
           <button id="startbutton" class="btn">Take Picture</button>
-        <!-- &nbsp;add picture -->
+          <div id="camera">
+             <!-- style="visibility: hidden;"> -->
+            <video id="video">Video stream not available.</video>
+          </div>
+          <canvas id="canvas">
+        </canvas>
+        <!-- <div class="output">
+          <img id="photo" alt="The screen capture will appear in this box."> 
+        </div> -->
       </div>
           <br>
-          <label for="fname">Journal Entry:</label>
-          <!-- <input type="text" id="journalInput" name="journalInput"> -->
-           
-            <textarea id="journalInput" rows="4" cols="30"></textarea>
+          <label for="fname">Journal Entry:</label>           
+            <textarea id="journalInput" rows="4" cols="30" style="display: block;"></textarea>
         </div>
         <div class="modal-footer">
           <button id="uncheck" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -130,6 +136,7 @@
   <script src="scripts/main.js"></script>
   <script> revel.page = revel.pages.MAIN </script>
   <script src="scripts/expandedList.js"></script>
+  <script src="scripts/takepicture.js"></script>
 </body>
 
 </html>

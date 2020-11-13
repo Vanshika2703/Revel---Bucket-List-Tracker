@@ -35,6 +35,7 @@ revel.resetExpandedList = function() {
         const blId = revel.storage.getbucketListId();
         if(blId == 0){
             alert("this list can't be deleted")
+            blId = 1;
         }else{
             revel.fbBucketListManager.delete(blId);
         }
