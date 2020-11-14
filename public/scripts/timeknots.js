@@ -232,8 +232,7 @@ var TimeKnots = {
       console.log(d.img);
 			revel.fbTimelineController.getImageUrl(d.img, url => pictureElem.querySelector("img").src = url);
     }
-      
-        inputElem.childNodes[1].appendChild(htmlToElement(`<div class="journalInput">${d.journal}
+      inputElem.childNodes[1].appendChild(htmlToElement(`<div class="journalInput">${d.journal}
       </div>`))  
       container.appendChild(inputElem)
       });
