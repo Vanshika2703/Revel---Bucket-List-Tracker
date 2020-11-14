@@ -83,13 +83,49 @@ function clearphoto() {
 function takepicture() {
     var context = canvas.getContext('2d');
     if (width && height) {
-      canvas.width = width;
-      canvas.height = height;
-      context.drawImage(video, 0, 0, width, height);
-      var data = canvas.toDataURL('image/png');
+        canvas.width = width;
+        canvas.height = height;
+        context.drawImage(video, 0, 0, width, height);
+        var dataURL = canvas.toDataURL('image/png');
+
+        var blobBin = atob(dataURL.split(',')[1]);
+        var array = [];
+        for(var i = 0; i < blobBin.length; i++) {
+            array.push(blobBin.charCodeAt(i));
+        }
+        var blob=new Blob([new Uint8Array(array)], {type: 'image/png'});
+        console.log("hecflekckck: ", blob);
+
+        var file = blobToFile(blob, "custom_photo");
+        console.log("ihawdiwaD: ", file);
+
+        // var formdata = new FormData();
+        // formdata.append("myNewFileName", file);
+        // $.ajax({
+        //     url: "uploadFile.php",
+        //     type: "POST",
+        //     data: formdata,
+        //     processData: false,
+        //     contentType: false,
+        // }).done(function(respond){
+        //     console.log("heckckckck: ", respond);
+        //     alert(respond);
+        //     fileSelected(respond);
+        // });
+
+        
+        pictureTaken(file);
+      
     //   photo.setAttribute('src', data);
     } else {
       clearphoto();
     }
   }
+
+function blobToFile(theBlob, fileName){
+    //A Blob() is almost a File() - it's just missing the two properties below which we will add
+    theBlob.lastModifiedDate = new Date();
+    theBlob.name = fileName;
+    return theBlob;
+}
 

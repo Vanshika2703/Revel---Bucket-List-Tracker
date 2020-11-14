@@ -91,13 +91,12 @@ revel.resetExpandedList = function() {
             <input class="input card-title" id="inputTitle" placeholder="ENTER TITLE">
             <div id="itemsBox" class="checkbox col list-items">
             </div>
+            <button id="addItem" type="button" class="btn">
+                <i class="material-icons">add</i>
+            </button>
             <hr>
             <div id="checkedItemsBox" class="checkbox col list-items">
             </div>
-        
-            <button id="addItem" type="button" class="btn">
-            <i class="material-icons">add</i>
-            </button>
         </div>
         `)
     }
@@ -119,7 +118,12 @@ function openAttachment() {
   
 function fileSelected(input){
     // alert(input.files[0]);
-    revel.imageBuffer = input.files[0]
+    revel.imageBuffer = input.files[0];
+}
+
+function pictureTaken(file){
+    // alert(input.files[0]);
+    revel.imageBuffer = file;
 }
 
 function doalert(checkboxElem) {
