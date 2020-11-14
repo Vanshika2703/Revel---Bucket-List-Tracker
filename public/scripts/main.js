@@ -369,6 +369,7 @@ revel.FbBucketListManager = class {
 			let path = revel.FB_KEY_ITEMS+"."+ (next.id ? next.id : Math.random().toString(36).substr(2, 9));
 			if(revel.inputBuffer[next.id] && revel.inputBuffer[next.id][revel.FB_KEY_PICTURE])
 				this.uploadImage(revel.inputBuffer[next.id][revel.FB_KEY_PICTURE]);
+			if(!next.Description) return {...prev, [path]: null};
 			return { 
 				...prev,
 				[path+"."+revel.FB_KEY_DESCRIPTION] : next.Description,
@@ -378,7 +379,21 @@ revel.FbBucketListManager = class {
 				...revel.inputBuffer[next.id]? {[path+"."+revel.FB_KEY_ISCHECKED] : revel.inputBuffer[next.id][revel.FB_KEY_ISCHECKED]} : false
 			};
 		},{}))
-		.then(function() {
+		.then(() => {
+			let docSnap = [];
+			this._documentSnapshots.forEach(doc=> {
+				if(doc.id === id) docSnap = doc;
+			});
+			const mapReference = docSnap.get(revel.FB_KEY_ITEMS);
+			let map = docSnap.get(revel.FB_KEY_ITEMS);
+			console.log("dis da map",map);
+			Object.keys(mapReference).forEach(x=> {
+				console.log("testing: ", mapReference[x]);
+				if(!mapReference[x]) delete map[x];
+			})
+			this._ref.doc(id).update({
+				[revel.FB_KEY_ITEMS]: map
+			});
 			console.log("Items successfully updated!");
 		})
 		.catch(function (error) {
