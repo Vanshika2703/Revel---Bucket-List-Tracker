@@ -144,7 +144,20 @@ var TimeKnots = {
 
     console.log('events before circle init  ', events);
     svg.selectAll("circle")
-    .data([events]).enter()
+    .data(() => {
+      let vals = Object.values(events.reduce((prev, next) => {console.log(next);
+      if(!prev[next.date.getYear()+"-"+next.date.getMonth()]){
+        console.log("wtf");
+        return {...prev, [next.date.getYear()+"-"+next.date.getMonth()]:[next]};
+      }
+      else{
+        console.log("wtf2");
+        (prev[next.date.getYear()+"-"+next.date.getMonth()]).push(next);
+        return prev;
+      }},{}))
+      console.log("wtfme ", vals);
+      return vals;
+    }).enter()
     .append("circle")
     .attr("class", "timeline-event")
     .attr("r", function(d){if(d.radius != undefined){return d.radius} return cfg.radius})
