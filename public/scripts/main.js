@@ -210,6 +210,18 @@ revel.TimelineController = class {
 
 		TimeKnots.draw("#timelineNonDate", items, {dateFormat: "%B %Y", color: "teal", width:500, showLabels:false, labelFormat: "%Y"});
 	}
+
+	getImageUrl (imageName, callback) {
+		console.log("fetching image ", imageName);
+		var storageRef = firebase.storage().ref();
+		var imageRef = storageRef.child(imageName);
+
+		imageRef.getDownloadURL().then(function(url) {
+			console.log(url);
+			callback(url);
+		});
+		return imageName;
+  }
 }
 
 revel.List = class {

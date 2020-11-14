@@ -1,6 +1,8 @@
 
    //playing around with prototyping. This way of doing it is highly discouraged and is a part of experimentation
 
+  
+  
    if( typeof Element.prototype.clearChildren === 'undefined' ) {
       Object.defineProperty(Element.prototype, 'clearChildren', {
         configurable: true,
@@ -10,6 +12,8 @@
         }
       });
   }
+
+
 
 function htmlToElement(html) {
   var template = document.createElement('template');
@@ -199,19 +203,26 @@ var TimeKnots = {
       let container = document.getElementById("cardsContainer");
       container.clearChildren();
       d1.forEach(d => {
-        container.appendChild(htmlToElement(`<div class="card">
-      <div class="card-title">
-        <h4 class="item-desc">${d.name}</h4>
-        <h6>${d.date.toString().substring(0, d.date.toString().length - 33)}</h6>
+        const inputElem = htmlToElement(`<div class="card">
+        <div class="card-title">
+          <h4 class="item-desc">${d.name}</h4>
+          <h6>${d.date.toString().substring(0, d.date.toString().length - 33)}</h6>
+        </div>
+        <div class="card-body">
+        <div class="imgHolder">
+          <img src="${d.img}" alt="input picture">
+        </div>
       </div>
-       <div class="card-body">
-         <div class="imgHolder">
-           <img src="${d.img}" alt="input picture">
-         </div>
-         <div class="journalInput">${d.journal}
-         </div>
-       </div>
-     </div>`))
+       </div>`);
+        const pictureElem = htmlToElement(`<div class="imgHolder">
+        <img src="">
+      </div>`);
+      inputElem.childNodes[1].appendChild(pictureElem);
+      inputElem.childNodes[1].appendChild(htmlToElement(`<div class="journalInput">${d.journal}
+      </div>`))
+      console.log(d.img);
+			revel.fbTimelineController.getImageUrl(d.img, url => pictureElem.querySelector("img").src = url);
+        container.appendChild(htmlToElement(inputElem))
       });
     
     //  if(cfg.dateDimension) {
