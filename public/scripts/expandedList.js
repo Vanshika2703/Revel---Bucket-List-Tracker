@@ -83,7 +83,7 @@ revel.resetExpandedList = function() {
     function _createEmptyExpandedList() {
         return htmlToElement(`<div class="card-body">
             <button id="back" type="button" class="btn btn-dark">
-            <i class="material-icons justify-content-left">arrow_back</i>
+            <i class="material-icons justify-content-left">done</i>
             </button>
             <button type="button" class="close" aria-label="Close" data-toggle="modal" data-target="#confirmDeleteModal">
             <i class="material-icons justify-content-right">delete</i>

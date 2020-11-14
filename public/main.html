@@ -16,45 +16,17 @@
   <div id="navPlaceholder"></div>
   <div id="listPage" class="page-container">
     <div id="listContainer" class="hidden">
-      <!-- <div class="emptyPage justify-content-center">
-        <br><br>
-        No Lists yet!
-        <br>
-        Click the '+' icon to add a new list
-        <br><br>
-      </div> -->
-      <!-- <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">title</h4>
-          <div class="checkbox col">
-            <div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>ITEM 1</h5> </label> </div>
-            <div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>ITEM 1</h5> </label> </div> 
-            <div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>ITEM 1</h5> </label> </div>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">title</h5>
-          <div class="checkbox col">
-            <div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>ITEM 1</h5> </label> </div>
-            <div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>ITEM 1</h5> </label> </div>
-            <div class="row checkbox"> <label> <input type="checkbox" class="item"> <h5>ITEM 1</h5> </label> </div>
-          </div>
-        </div>
-      </div> -->
     </div>
     <div id="expandedList" class="hidden">
       <div class="card-body">
         <button id="back" type="button" class="btn btn-dark">
-          <i class="material-icons justify-content-left">arrow_back</i>
+          <i class="material-icons justify-content-left">done</i>
         </button>
         <button type="button" class="close" aria-label="Close" data-toggle="modal" data-target="#confirmDeleteModal">
           <i class="material-icons justify-content-right">delete</i>
         </button>
         <input class="input card-title" id="inputTitle" placeholder="ENTER TITLE">
         <div id="itemsBox" class="checkbox col list-items">
-          <!-- <div class="row checkbox"> <label> <input type="checkbox" class="item" onchange="doalert(this)"> <input class="input" placeholder="ENTER BUCKET LIST ITEM"> </label> </div> -->
         </div>
 
         <button id="addItem" type="button" class="btn">
@@ -67,7 +39,7 @@
     <i class="material-icons">add</i>
   </button>
 
-  <!-- Modal -->
+  <!-- Modals -->
   <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -91,9 +63,6 @@
         <div class="modal-body">
           add a picture or write something about it to make the event special
           <div>
-            <!-- <button id="addImage" type="button" class="btn" onclick="openAttachment()">
-            <i class="material-icons">add</i>
-          </button> -->
           <input type="file" class="file" id="attachment" style="display: none;" onchange="fileSelected(this)"/>
           <input type="button" class="file btn" id="btnAttachment" onclick="openAttachment()" value="Upload Picture"/>
           <button id="startbutton" class="btn">Take Picture</button>
@@ -102,9 +71,6 @@
           </div>
           <canvas id="canvas">
         </canvas>
-        <!-- <div class="output">
-          <img id="photo" alt="The screen capture will appear in this box."> 
-        </div> -->
       </div>
           <br>
           <label for="fname">Journal Entry:</label>           
