@@ -141,14 +141,14 @@ revel.ListPageController = class {
 					</label> 
 				</div>`);
 		if(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_PICTURE]) {
-			const pictureElem = htmlToElement(`<div class="pin">
+			const pictureElem = htmlToElement(`<div class="col-12 col-sm-6 col-md-4" style="padding:0;"><div class="pin">
 				<img src="" alt="${item[revel.FB_KEY_DESCRIPTION]}">
-		 	</div>`);
+		 	</div></div>`);
 			inputElem.appendChild(pictureElem);
 			this.getImageUrl(item[revel.FB_KEY_PICTURE], url => pictureElem.querySelector("img").src = url);
 		}
 		if(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_JOURNAL]) {
-			inputElem.appendChild(htmlToElement(`<p>${item[revel.FB_KEY_JOURNAL]}</p>`));
+			inputElem.appendChild(htmlToElement(`<p class="col">${item[revel.FB_KEY_JOURNAL]}</p>`));
 		}
 		return inputElem;
 	}

@@ -129,9 +129,8 @@ body {
     display: inline-block;
     box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
     padding: 10px;
-    margin: 0 15px 10px 25px;
+    margin: 0 0 10px 25px;
     background: linear-gradient(45deg, #FFF, #EEE);
-    width: 100px;
 }
 
 .pin img {
@@ -164,12 +163,13 @@ body {
 }
 
 #expandedList{
-    height: calc(90vh - 75px);
-    width: 70vw;
+    min-height: calc(90vh - 75px);
+    width: 90vw;
+    max-width: 1000px;
     background-color: #D6FAF3;
-    margin:20px;
+    display: block;
+    margin: 25px auto;
     padding: 5px 40px;
-    display: inline-flex;
     font-family: 'Permanent Marker', cursive;
     /* Firefox */
     -moz-box-shadow:7px 7px 7px rgba(33,33,33,1);
@@ -216,8 +216,8 @@ body {
 #backgroundHolder{
     background: url(../images/boardBackground1.jpg) no-repeat center center fixed;
     background-size: cover;
-    height: 100%;
-    overflow: hidden;
+    /* height: 100%; */
+    /* overflow: hidden; */
 }
 
 #loginPage {
