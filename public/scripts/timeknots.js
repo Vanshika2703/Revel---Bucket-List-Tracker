@@ -138,8 +138,9 @@ var TimeKnots = {
                       return cfg.color})
     .style("stroke-width", cfg.lineWidth);
 
+    console.log('events before circle init  ', events);
     svg.selectAll("circle")
-    .data(events).enter()
+    .data([events]).enter()
     .append("circle")
     .attr("class", "timeline-event")
     .attr("r", function(d){if(d.radius != undefined){return d.radius} return cfg.radius})
@@ -193,14 +194,15 @@ var TimeKnots = {
       .style("opacity", .9);
 
     })
-    .on("click",function(d){
-      console.log(d);
+    .on("click", function(d1) {
+      console.log(d1);
       let container = document.getElementById("cardsContainer");
       container.clearChildren();
-      container.appendChild(htmlToElement(`<div class="card">
+      d1.forEach(d => {
+        container.appendChild(htmlToElement(`<div class="card">
       <div class="card-title">
         <h4 class="item-desc">${d.name}</h4>
-        <h6>${d.date}</h6>
+        <h6>${d.date.toString().substring(0, d.date.toString().length - 33)}</h6>
       </div>
        <div class="card-body">
          <div class="imgHolder">
@@ -210,20 +212,32 @@ var TimeKnots = {
          </div>
        </div>
      </div>`))
-      
-     d3.select(this)
-      .style("fill", function(d){if(d.color != undefined){return d.color} return cfg.color}).transition()
-      .duration(100).attr("r",  function(d){if(d.radius != undefined){return Math.floor(d.radius*1.5)} return Math.floor(cfg.radius*1.5)});
-      tip.transition()
-      .duration(100)
-      .style("opacity", .9);
-    })
+      });
+    
+    //  if(cfg.dateDimension) {
+    //   var format = d3.time.format(cfg.dateFormat);
+    //   var datetime = format(new Date(d.date));
+    //   var dateValue = (" <small>("+datetime+")</small>");
+    // } else {
+    //   var format = function(d){return d}; // TODO
+    //   var datetime = d.date;
+    //   var dateValue = " <small>("+d.date+")</small>";
+    // }
+
+    // d3.select(this)
+    // .style("fill", function(d){if(d.color != undefined){return d.color} return cfg.color}).transition()
+    // .attr("r",  function(d){if(d.radius != undefined){return Math.floor(d.radius*1.5)} return Math.floor(cfg.radius*1.5)});
+    // tip.html("");
+    // tip.append("div").style("float", "left").html(dateValue );
+    // tip.transition()
+    // .style("opacity", .9);
+    // 
+  })
     .on("mouseout", function(){
         d3.select(this)
         .style("fill", function(d){if(d.background != undefined){return d.background} return cfg.background}).transition()
-        .duration(100).attr("r", function(d){if(d.radius != undefined){return d.radius} return cfg.radius});
+        .attr("r", function(d){if(d.radius != undefined){return d.radius} return cfg.radius});
         tip.transition()
-        .duration(100)
     .style("opacity", 0)});
 
     //Adding start and end labels
@@ -233,7 +247,7 @@ var TimeKnots = {
         var startString = format(new Date(minValue));
         var endString = format(new Date(maxValue));
       }else{
-        var format = function(d){return d}; //Should I do something else?
+        var format = function(d){return d};
         var startString = minValue;
         var endString = maxValue;
       }
@@ -252,7 +266,7 @@ var TimeKnots = {
     svg.on("mousemove", function(){
         tipPixels = parseInt(tip.style("height").replace("px", ""));
     return tip.style("top", (d3.event.pageY-tipPixels-margin)+"px").style("left",(d3.event.pageX+20)+"px");})
-    .on("mouseout", function(){return tip.style("opacity", 0).style("top","0px").style("left","0px");});
+   .on("mouseout", function(){return tip.style("opacity", 0).style("top","0px").style("left","0px");});
     }
   }
 
