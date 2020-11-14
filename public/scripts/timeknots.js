@@ -147,15 +147,13 @@ var TimeKnots = {
     .data(() => {
       let vals = Object.values(events.reduce((prev, next) => {console.log(next);
       if(!prev[next.date.getYear()+"-"+next.date.getMonth()]){
-        console.log("wtf");
         return {...prev, [next.date.getYear()+"-"+next.date.getMonth()]:[next]};
       }
       else{
-        console.log("wtf2");
         (prev[next.date.getYear()+"-"+next.date.getMonth()]).push(next);
         return prev;
       }},{}))
-      console.log("wtfme ", vals);
+      console.log("vals ", vals);
       return vals;
     }).enter()
     .append("circle")

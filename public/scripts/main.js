@@ -203,7 +203,8 @@ revel.TimelineController = class {
 				.reduce((p, n) => n[revel.FB_KEY_ISCHECKED]?[...p, {
 					name: n[revel.FB_KEY_DESCRIPTION],
 					date: n[revel.FB_KEY_LAST_TOUCHED].toDate(),
-					img: n[revel.FB_KEY_PICTURE]
+					img: n[revel.FB_KEY_PICTURE],
+					journal: n[revel.FB_KEY_JOURNAL]
 				}]:p,[])],[]);
 
 		//console.log(items);
