@@ -222,11 +222,9 @@ var TimeKnots = {
           <h6>${d.date.toString().substring(0, d.date.toString().length - 33)}</h6>
         </div>
         <div class="card-body">
-        <div class="imgHolder">
-          <img src="${d.img}" alt="input picture">
         </div>
-      </div>
        </div>`);
+
         const pictureElem = htmlToElement(`<div class="imgHolder">
         <img src="">
       </div>`);
