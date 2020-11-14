@@ -139,11 +139,17 @@ revel.ListPageController = class {
 						</span> 
 						<input id="${item.id}" class="input" value="${item[revel.FB_KEY_DESCRIPTION]}"> 
 					</label> 
-					${(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_PICTURE])? `<img id="${item[revel.FB_KEY_PICTURE]}" src="" alt="${item[revel.FB_KEY_DESCRIPTION]}">`:""}
-					${(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_JOURNAL])? `<p>${item[revel.FB_KEY_JOURNAL]}</p>`:""}
 				</div>`);
-		if(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_PICTURE])
-			this.getImageUrl(item[revel.FB_KEY_PICTURE], url => $("#"+item[revel.FB_KEY_PICTURE]).attr("src", url));
+		if(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_PICTURE]) {
+			const pictureElem = htmlToElement(`<div class="pin">
+				<img src="" alt="${item[revel.FB_KEY_DESCRIPTION]}">
+		 	</div>`);
+			inputElem.appendChild(pictureElem);
+			this.getImageUrl(item[revel.FB_KEY_PICTURE], url => pictureElem.querySelector("img").src = url);
+		}
+		if(item[revel.FB_KEY_ISCHECKED]&&item[revel.FB_KEY_JOURNAL]) {
+			inputElem.appendChild(htmlToElement(`<p>${item[revel.FB_KEY_JOURNAL]}</p>`));
+		}
 		return inputElem;
 	}
 
@@ -197,8 +203,7 @@ revel.TimelineController = class {
 				.reduce((p, n) => n[revel.FB_KEY_ISCHECKED]?[...p, {
 					name: n[revel.FB_KEY_DESCRIPTION],
 					date: n[revel.FB_KEY_LAST_TOUCHED].toDate(),
-					img: n[revel.FB_KEY_PICTURE],
-					journal: n[revel.FB_KEY_JOURNAL]
+					img: n[revel.FB_KEY_PICTURE]
 				}]:p,[])],[]);
 
 		//console.log(items);
@@ -241,45 +246,13 @@ revel.initializePage = function() {
 revel.FbAuthManager = class {
 	constructor() {
 		this._user=null;
-		const displayName = null;
-		const email = null;		
-		const emailVerified = null;
-		const photoURL = null;
-		const phoneNumber = null;
-		const inputEmailEl = document.querySelector("#inputEmail");
-		const inputPasswordEl = document.querySelector("#inputPassword");
-		if(revel.page = revel.pages.index){
-			document.querySelector("#createAccountButton").onclick = (event) =>{
-				console.log(`Create account for email: ${inputEmailEl.value} password: ${inputPasswordEl.value}`);
-			
-				firebase.auth().createUserWithEmailAndPassword(inputEmailEl.value, inputPasswordEl.value).catch(function(error) {
-					var errorCode = error.code;
-					var errorMessage = error.message;
-					console.log("Create account error", errorCode, errorMessage);
-				  });
-			};
-			document.querySelector("#logInButton").onclick = (event) =>{
-				console.log(`log in for email: ${inputEmailEl.value} password: ${inputPasswordEl.value}`);
-			
-				firebase.auth().signInWithEmailAndPassword(inputEmailEl.value, inputPasswordEl.value).catch(function(error) {
-					
-					var errorCode = error.code;
-					var errorMessage = error.message;
-					console.log("Existing Account log in error", errorCode, errorMessage);
-				  });
-			
-			};
-		}
-	
 	}
-	
 	beginListening(changeListener) {
 		firebase.auth().onAuthStateChanged((user)=>{
 			this._user = user;
 			changeListener();
 		})
 	}
-	
 	get isSignedIn() {
 		return !!this._user;
 	}
