@@ -180,12 +180,12 @@ var TimeKnots = {
         if(cfg.horizontalLayout){
           return Math.floor(cfg.height/2)
         }
-        var datum = (cfg.dateDimension)?new Date(d.date).getTime():d.value;
+        var datum = (cfg.dateDimension)?new Date(d[0].date).getTime():d[0].value;
         return Math.floor(step*(datum - minValue) + margin)
     })
     .attr("cx", function(d){
         if(cfg.horizontalLayout){
-          var datum = (cfg.dateDimension)?new Date(d.date).getTime():d.value;
+          var datum = (cfg.dateDimension)?new Date(d[0].date).getTime():d[0].value;
           var x=  Math.floor(step*(datum - minValue) + margin);
           return x;
         }
@@ -194,12 +194,12 @@ var TimeKnots = {
       
       if(cfg.dateDimension){
         var format = d3.time.format(cfg.dateFormat);
-        var datetime = format(new Date(d.date));
+        var datetime = format(new Date(d[0].date));
         var dateValue = (" <small>("+datetime+")</small>");
       }else{
         var format = function(d){return d}; // TODO
-        var datetime = d.date;
-        var dateValue = " <small>("+d.date+")</small>";
+        var datetime = d[0].date;
+        var dateValue = " <small>("+d[0].date+")</small>";
       }
       d3.select(this)
       .style("fill", function(d){if(d.color != undefined){return d.color} return cfg.color}).transition()
@@ -228,14 +228,14 @@ var TimeKnots = {
       const pictureElem = htmlToElement(`<div class="imgHolder">
         <img src="">
       </div>`);
-      inputElem.childNodes[1].appendChild(pictureElem);
+      inputElem.querySelector(".card-body").appendChild(pictureElem);
       console.log(d.img);
 			revel.fbTimelineController.getImageUrl(d.img, url => pictureElem.querySelector("img").src = url);
     }
       
         inputElem.childNodes[1].appendChild(htmlToElement(`<div class="journalInput">${d.journal}
       </div>`))  
-      container.appendChild(htmlToElement(inputElem))
+      container.appendChild(inputElem)
       });
     
     //  if(cfg.dateDimension) {

@@ -50,9 +50,9 @@ revel.resetExpandedList = function() {
         document.querySelectorAll("#itemsBox div.row.checkbox .input").forEach(item => {
             items.push({Description: item.value, id: item.id});				
         });
-        document.querySelectorAll("#checkedItemsBox div.row.checkbox .input").forEach(item => {
-            items.push({Description: item.value, id: item.id});				
-        });
+        // document.querySelectorAll("#checkedItemsBox div.row.checkbox .input").forEach(item => {
+        //     items.push({Description: item.value, id: item.id});				
+        // });
         console.log('items :>> ', items);
         if(blId==0){
             console.log('blId :>> ', blId);
