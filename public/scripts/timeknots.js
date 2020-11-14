@@ -224,16 +224,18 @@ var TimeKnots = {
         <div class="card-body">
         </div>
        </div>`);
-
-        const pictureElem = htmlToElement(`<div class="imgHolder">
+      if(d.img!=""){
+      const pictureElem = htmlToElement(`<div class="imgHolder">
         <img src="">
       </div>`);
       inputElem.childNodes[1].appendChild(pictureElem);
-      inputElem.childNodes[1].appendChild(htmlToElement(`<div class="journalInput">${d.journal}
-      </div>`))
       console.log(d.img);
 			revel.fbTimelineController.getImageUrl(d.img, url => pictureElem.querySelector("img").src = url);
-        container.appendChild(htmlToElement(inputElem))
+    }
+      
+        inputElem.childNodes[1].appendChild(htmlToElement(`<div class="journalInput">${d.journal}
+      </div>`))  
+      container.appendChild(htmlToElement(inputElem))
       });
     
     //  if(cfg.dateDimension) {
